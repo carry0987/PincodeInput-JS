@@ -10,10 +10,6 @@ class PincodeInput {
     private options!: PincodeInputOptions;
     private targetIndex: number = 0;
 
-    // Constants for Event Types
-    static readonly EVENT_CHANGE = 'change';
-    static readonly EVENT_COMPLETE = 'complete';
-
     // Methods for external use
     private _onChange: OnChangeCallback | undefined = undefined;
     private _onComplete: OnCompleteCallback | undefined = undefined;
@@ -151,20 +147,6 @@ class PincodeInput {
             this.element.value = value.slice(0, value.length - 1);
             Utils.updateVisiblePinCode(this.element, this._onChange, this._onComplete);
             this.updateFocus();
-        }
-    }
-
-    // Trigger event
-    private triggerEvent(eventType: string, value: string, idx: number): void {
-        switch (eventType) {
-            case PincodeInput.EVENT_CHANGE:
-                this._onChange?.(value, idx);
-                break;
-            case PincodeInput.EVENT_COMPLETE:
-                this._onComplete?.(value);
-                break;
-            default:
-                Utils.throwError(`Unsupported event type: ${eventType}`);
         }
     }
 
