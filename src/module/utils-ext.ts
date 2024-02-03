@@ -12,7 +12,7 @@ import {
     toggleClass as _toggleClass
 } from '@carry0987/utils';
 
-import { StylesObject, OnChangeCallback, OnCompleteCallback } from './interface/interfaces';
+import { StylesObject, OnChangeCallback, OnCompleteCallback } from '../interface/interfaces';
 
 class Utils {
     static throwError = _errorUtils.throwError;

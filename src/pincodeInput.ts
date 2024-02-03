@@ -1,14 +1,14 @@
-import Utils from './utils-ext';
-import reportInfo from './report';
+import Utils from './module/utils-ext';
+import reportInfo from './module/report';
 import { PincodeInputOptions, OnChangeCallback, OnCompleteCallback } from './interface/interfaces';
-import { defaults } from './config';
+import { defaults } from './module/config';
+import './style/pincodeInput.css';
 
 class PincodeInput {
     private static instances: PincodeInput[] = [];
     private static version: string = '__version__';
     private element!: HTMLInputElement;
     private options!: PincodeInputOptions;
-    private targetIndex: number = 0;
 
     // Methods for external use
     private _onInput: OnChangeCallback | undefined = undefined;
@@ -45,6 +45,14 @@ class PincodeInput {
     private createPincodeGrids(id: number): PincodeInput {
         const options: PincodeInputOptions = this.options;
         const maxLength = this.element.maxLength > 0 ? this.element.maxLength : options.length;
+
+        // Define the finalStyles object that will be aggregated and used later
+        let finalStyles: { [key: string]: any } = {};
+        if (options.styles && Object.keys(options.styles).length > 0) {
+            finalStyles = Utils.deepMerge({}, options.styles, finalStyles);
+        }
+        // Now that we've built up our styles, inject them
+        finalStyles && Utils.injectStylesheet(finalStyles, id.toString());
 
         // Create a container for pin code block
         const pincodeWrapper = Utils.createElem('div');

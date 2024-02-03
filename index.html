@@ -6,36 +6,7 @@
     <title>PincodeInput</title>
     <link href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <style>
-    .pincode-input {
-        position: absolute;
-        left: -9999px;
-        width: 1px;
-        height: 1px;
-        opacity: 0;
-        pointer-events: none;
-    }
-    .pincode {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-    }
-    .pincode-grid {
-        box-sizing: border-box;
-        width: 42px;
-        height: 56px;
-        outline: none;
-        border-bottom: 1px solid #b2b2b2;
-        font-size: 45px;
-        font-weight: 700;
-        text-align: center;
-        margin: 0 5px;
-    }
-    .pincode-focus {
-        border-bottom: 2px solid #007bff;
-    }
-    </style>
+    <link href="dist/pincodeInput.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="d-flex flex-column justify-content-center align-items-center">
@@ -57,9 +28,28 @@
     document.addEventListener('DOMContentLoaded', () => {
         const pincodeInput = new PincodeInput('#pincode', {
             secret: false,
-            length: 4,
-            onInput: (value) => {
+            length: 6,
+            styles: {
+                '.pincode-grid': {
+                    'border': '2px solid #000',
+                    'border-radius': '5px',
+                    'margin': '5px',
+                    'padding': '5px',
+                    'width': '50px',
+                    'text-align': 'center',
+                    'text-align': 'center',
+                    'line-height': 'normal',
+                    'display': 'flex',
+                    'align-items': 'center',
+                    'justify-content': 'center'
+                },
+                '.pincode-grid.pincode-focus': {
+                    'border-color': '#058bf1'
+                }
+            },
+            onInput: (value, idx) => {
                 document.getElementById('pincode-value').innerText = value;
+                console.log(idx);
             },
             onComplete: (value) => {
                 console.log('Complete', value);
