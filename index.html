@@ -60,6 +60,9 @@
             length: 4,
             onInput: (value) => {
                 document.getElementById('pincode-value').innerText = value;
+            },
+            onComplete: (value) => {
+                console.log('Complete', value);
             }
         });
     });
