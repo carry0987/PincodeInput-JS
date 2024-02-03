@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PincodeInput</title>
+    <link href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <style>
+    .pincode-input {
+        position: absolute;
+        left: -9999px;
+        width: 1px;
+        height: 1px;
+        opacity: 0;
+        pointer-events: none;
+    }
+    .pincode-grid {
+        box-sizing: border-box;
+        width: 42px;
+        height: 56px;
+        padding: 12px 2px;
+        outline: none;
+        border-bottom: 1px solid #b2b2b2;
+        font-size: 45px;
+        font-weight: 700;
+        text-align: center;
+    }
+    </style>
+</head>
+<body>
+    <div class="d-flex flex-column justify-content-center align-items-center">
+        <div id="app">
+            <h1 class="mb-3">PincodeInput</h1>
+        </div>
+        <!--//Number of selected images//-->
+        <div class="d-flex flex-row justify-content-center align-items-center">
+            <div class="d-flex flex-column justify-content-center align-items-center">
+                <h4>Input value&nbsp;:&nbsp;<span id="pincode-value">0</span></h4>
+            </div>
+        </div>
+        <div class="d-flex justify-content-center">
+            <input type="text" id="pincode" class="form-control" placeholder="Enter pincode" />
+        </div>
+    </div>
+    <script src="dist/pincodeInput.min.js"></script>
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+        const pincodeInput = new PincodeInput('#pincode', {
+            secret: false,
+            length: 4
+        });
+    });
+    </script>
+</body>
+</html>

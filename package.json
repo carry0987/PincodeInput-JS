@@ -1,0 +1,43 @@
+{
+  "name": "@carry0987/pincode-input",
+  "version": "1.0.0",
+  "description": "Smooth auto-advancing PIN entry",
+  "type": "module",
+  "main": "dist/pincodeInput.min.js",
+  "module": "dist/pincodeInput.esm.js",
+  "types": "dist/pincodeInput.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "rollup --config rollup.config.js",
+    "build": "rollup --config rollup.config.js --environment BUILD:production"
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/carry0987/PincodeInput-JS.git"
+  },
+  "keywords": [
+    "otp",
+    "pincode"
+  ],
+  "author": "carry0987",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/carry0987/PincodeInput-JS/issues"
+  },
+  "homepage": "https://github.com/carry0987/PincodeInput-JS#readme",
+  "devDependencies": {
+    "@carry0987/utils": "^3.2.2",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-replace": "^5.0.5",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^11.1.6",
+    "rollup": "^4.9.6",
+    "rollup-plugin-delete": "^2.0.0",
+    "rollup-plugin-dts": "^6.1.0",
+    "tslib": "^2.6.2",
+    "typescript": "^5.3.3"
+  }
+}
