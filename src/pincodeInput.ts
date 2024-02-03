@@ -61,8 +61,10 @@ class PincodeInput {
         // Create visible pin code grids and append them to the wrapper
         for (let i = 0; i < maxLength!; i++) {
             const grid = Utils.createElem('div') as HTMLDivElement;
+            const span = Utils.createElem('span') as HTMLSpanElement;
             grid.className = 'pincode-grid';
             grid.dataset.index = i.toString();
+            grid.appendChild(span);
             pinCode.appendChild(grid);
         }
 
@@ -81,6 +83,12 @@ class PincodeInput {
         // Add class to the hidden input
         Utils.addClass(this.element, 'pincode-input');
         this.element.removeAttribute('hidden'); 
+        // Setup the hidden input
+        this.element.type = options.secret ? 'password' : 'text';
+        this.element.pattern = '[0-9]*';
+        this.element.inputMode = 'numeric';
+        this.element.maxLength = maxLength!;
+        this.element.autocomplete = 'off';
         // Append the original input to the wrapper
         pincodeWrapper.appendChild(this.element);
 
@@ -102,31 +110,56 @@ class PincodeInput {
                 const ele = e.target as HTMLDivElement;
                 this.targetIndex = parseInt(ele.dataset.index!);
                 this.element.focus();
-                ele.classList.add('focus');
             });
         });
+
+        // Bind grid click event to focus input and update focus
+        this.element.addEventListener('focus', () => this.updateFocus());
+        // Bind blur event to the hidden input to remove the focus class
+        this.element.addEventListener('blur', this.removeFocus.bind(this), true);
 
         return this;
     }
 
-    // Method to handle user input
-    private handleInput(event: KeyboardEvent): void {
-        if (event.key === 'Backspace' && this.element.value.length) {
-            this.element.value = this.element.value.slice(0, -1);
-        } else if (/\d/.test(event.key) && this.element.value.length < this.element.maxLength) {
-            this.element.value += event.key;
-        }
-        // Update the visible pin code grids
-        Utils.updateVisiblePinCode(this.element, this._onChange, this._onComplete);
-        // Prevent the default input action
-        event.preventDefault();
+    // Update the current focus grid based on the length of the input value
+    private updateFocus(): void {
+        const grids = Array.from(Utils.getElem('.pincode-grid', 'all') as NodeList) as HTMLDivElement[];
+        const valueLength = this.element.value.length;
+
+        grids.forEach((grid, index) => {
+            const isFocused = (valueLength === this.element.maxLength) ? index === valueLength - 1 : index === valueLength;
+            Utils.toggleClass(grid, 'pincode-focus', isFocused);
+        });
     }
 
-    // Method to handle the backspace event
-    private handleBackspace(event: KeyboardEvent): void {
-        if (event.key === 'Backspace' && this.element.value.length) {
-            this.element.value = this.element.value.slice(0, -1);
+    // Remove focus from all grids
+    private removeFocus(): void {
+        const grids = document.querySelectorAll('.pincode-grid');
+        grids.forEach(grid => {
+            grid.classList.remove('pincode-focus');
+        });
+    }
+
+    // Handle input event
+    private handleInput(event: KeyboardEvent): void {
+        if (/\d/.test(event.key) && this.element.value.length < this.element.maxLength) {
+            this.element.value += event.key;
             Utils.updateVisiblePinCode(this.element, this._onChange, this._onComplete);
+            this.updateFocus();
+        } else if (event.key === 'Backspace') {
+            this.handleBackspace();
+        }
+
+        event.preventDefault(); // Prevent default behavior
+    }
+
+    // Handle Backspace key
+    private handleBackspace(): void {
+        const value = this.element.value;
+        if (value.length > 0) {
+            this.element.value = value.slice(0, value.length - 1);
+            Utils.updateVisiblePinCode(this.element, this._onChange, this._onComplete);
+            this.updateFocus();
         }
     }
 

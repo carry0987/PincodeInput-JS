@@ -9,8 +9,7 @@ import {
     createElem as _createElem,
     addClass as _addClass,
     removeClass as _removeClass,
-    toggleClass as _toggleClass,
-    addEventListener as _addEventListener
+    toggleClass as _toggleClass
 } from '@carry0987/utils';
 
 import { StylesObject, OnChangeCallback, OnCompleteCallback } from './interface/interfaces';
@@ -27,7 +26,6 @@ class Utils {
     static addClass = _addClass;
     static removeClass = _removeClass;
     static toggleClass = _toggleClass;
-    static addEventListener = addEventListener;
 
     static isDigit(key: string): boolean {
         return /^\d$/.test(key);
@@ -35,10 +33,10 @@ class Utils {
 
     static updateVisiblePinCode(element: HTMLInputElement, onChange?: OnChangeCallback, onComplete?: OnCompleteCallback): void {
         const value = element.value;
-        const grids = Utils.getElem('.pincode-grid', 'all') as NodeList;
+        const grids = Utils.getElem('.pincode-grid span', 'all') as NodeList;
 
-        grids.forEach((grid, index) => {
-            (grid as HTMLDivElement).textContent = value[index] || '';
+        grids.forEach((span, index) => {
+            span.textContent = value[index] || '';
         });
 
         // Call onchange event if defined
