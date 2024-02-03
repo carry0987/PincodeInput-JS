@@ -8,6 +8,9 @@ Features of `PincodeInput-JS` include:
 - Paste support allowing users to input a complete code in a single action.
 - Customizable input fields for different styles and layouts.
 - Built-in validation to ensure only numeric input is accepted.
+- Support password mode to hide the input value with custom placeholder.
+- Support for both mobile and desktop devices.
+- No dependencies on other libraries or frameworks.
 
 ## Installation
 To install `PincodeInput-JS` in your project, simply run the following command in your terminal:

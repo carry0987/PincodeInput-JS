@@ -31,12 +31,12 @@ class Utils {
         return /^\d$/.test(key);
     }
 
-    static updateVisiblePinCode(element: HTMLInputElement, onInput?: OnChangeCallback, onComplete?: OnCompleteCallback): void {
+    static updateVisiblePinCode(element: HTMLInputElement, onInput?: OnChangeCallback, onComplete?: OnCompleteCallback, secret?: string): void {
         const value = element.value;
         const grids = Utils.getElem('.pincode-grid span', 'all') as NodeList;
 
         grids.forEach((span, index) => {
-            span.textContent = value[index] || '';
+            span.textContent = secret && value[index] ? secret : value[index] || '';
         });
 
         // Call onchange event if defined

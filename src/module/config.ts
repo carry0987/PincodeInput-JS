@@ -1,7 +1,8 @@
 import { PincodeInputOptions } from '../interface/interfaces';
 
 export const defaults: PincodeInputOptions = {
-    secret: false,
+    secure: false,
+    placeHolder: '•',
     length: 6,
     styles: {},
     onLoad: undefined,

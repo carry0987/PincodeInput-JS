@@ -154,11 +154,11 @@ class Utils {
     static isDigit(key) {
         return /^\d$/.test(key);
     }
-    static updateVisiblePinCode(element, onInput, onComplete) {
+    static updateVisiblePinCode(element, onInput, onComplete, secret) {
         const value = element.value;
         const grids = Utils.getElem('.pincode-grid span', 'all');
         grids.forEach((span, index) => {
-            span.textContent = value[index] || '';
+            span.textContent = secret && value[index] ? secret : value[index] || '';
         });
         // Call onchange event if defined
         onInput?.(element.value, element.value.length - 1);
@@ -203,7 +203,8 @@ const reportInfo = (vars, showType = false) => {
 };
 
 const defaults = {
-    secret: false,
+    secure: false,
+    placeHolder: '•',
     length: 6,
     styles: {},
     onLoad: undefined,
@@ -243,7 +244,7 @@ styleInject(css_248z);
 
 class PincodeInput {
     static instances = [];
-    static version = '1.0.0';
+    static version = '1.0.1';
     element;
     options;
     // Methods for external use
@@ -317,7 +318,7 @@ class PincodeInput {
         Utils.addClass(this.element, 'pincode-input');
         this.element.removeAttribute('hidden');
         // Setup the hidden input
-        this.element.type = options.secret ? 'password' : 'tel';
+        this.element.type = options.secure ? 'password' : 'text';
         this.element.pattern = '[0-9]*';
         this.element.inputMode = 'numeric';
         this.element.maxLength = maxLength;
@@ -364,7 +365,8 @@ class PincodeInput {
     onPinInput(event) {
         const input = event.target;
         if (input.value.length <= input.maxLength) {
-            Utils.updateVisiblePinCode(input, this._onInput, this._onComplete);
+            const placeHolder = this.options.secure ? this.options.placeHolder : undefined;
+            Utils.updateVisiblePinCode(input, this._onInput, this._onComplete, placeHolder);
             this.updateFocus();
         }
         else {

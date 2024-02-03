@@ -1,5 +1,6 @@
 export interface PincodeInputOptions {
-    secret?: boolean; // Whether to show the input as password or text
+    secure?: boolean; // Whether to show the input as password or text
+    placeHolder?: string; // Placeholder for the secure input
     length?: number; // Maximum length of the input
     styles?: Record<string, StylesObject>; // Styles for the pincode input
     onLoad?: () => void; // Callback when the component is loaded

@@ -88,7 +88,7 @@ class PincodeInput {
         Utils.addClass(this.element, 'pincode-input');
         this.element.removeAttribute('hidden'); 
         // Setup the hidden input
-        this.element.type = options.secret ? 'password' : 'tel';
+        this.element.type = options.secure ? 'password' : 'text';
         this.element.pattern = '[0-9]*';
         this.element.inputMode = 'numeric';
         this.element.maxLength = maxLength!;
@@ -143,7 +143,8 @@ class PincodeInput {
     private onPinInput(event: Event): void {
         const input = event.target as HTMLInputElement;
         if (input.value.length <= input.maxLength) {
-            Utils.updateVisiblePinCode(input, this._onInput, this._onComplete);
+            const placeHolder = this.options.secure ? this.options.placeHolder : undefined;
+            Utils.updateVisiblePinCode(input, this._onInput, this._onComplete, placeHolder);
             this.updateFocus();
         } else {
             // Prevent the value from exceeding maxLength

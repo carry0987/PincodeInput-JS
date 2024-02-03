@@ -1,6 +1,6 @@
 {
   "name": "@carry0987/pincode-input",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Smooth auto-advancing PIN entry",
   "type": "module",
   "main": "dist/pincodeInput.min.js",
