@@ -16,4 +16,6 @@ npm i @carry0987/pincode-input
 ```
 
 ## Usage
-You can see the example **[here](./index.html)**
+You can see the example here:
+**[Code](./index.html)**  
+**[Demo](https://carry0987.github.io/PincodeInput-JS/)**
