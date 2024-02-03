@@ -114,8 +114,11 @@ class PincodeInput {
 
         grids.forEach((grid, index) => {
             this.element.focus();
-            const isFocused = (valueLength === this.element.maxLength) ? index === valueLength - 1 : index === valueLength;
-            Utils.toggleClass(grid, 'pincode-focus', isFocused);
+            if (index === valueLength) {
+                grid.classList.add('pincode-focus');
+            } else {
+                grid.classList.remove('pincode-focus');
+            }
         });
     }
 
