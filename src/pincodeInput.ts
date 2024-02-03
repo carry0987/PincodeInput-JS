@@ -180,8 +180,6 @@ class PincodeInput {
     set onComplete(callback: OnCompleteCallback) {
         this._onComplete = callback;
     }
-
-    // Other helpful methods can be added here (e.g., getPincode, reset, etc.)
 }
 
 export default PincodeInput;
