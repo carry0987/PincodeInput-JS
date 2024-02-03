@@ -28,12 +28,10 @@
     <script type="text/javascript">
     document.addEventListener('DOMContentLoaded', () => {
         const pincodeInput = new PincodeInput('#pincode', {
-            secure: true,
+            secure: false,
             length: 6,
             styles: {
                 '.pincode-grid': {
-                    'border': '2px solid #000',
-                    'border-radius': '5px',
                     'margin': '5px',
                     'padding': '5px',
                     'width': '50px',
@@ -45,7 +43,7 @@
                     'justify-content': 'center'
                 },
                 '.pincode-grid.pincode-focus': {
-                    'border-color': '#058bf1'
+                    'border-bottom': '5px solid #007bff'
                 }
             },
             onInput: (value, idx) => {
