@@ -133,11 +133,11 @@ class PincodeInput {
             this.element.value += event.key;
             Utils.updateVisiblePinCode(this.element, this._onChange, this._onComplete);
             this.updateFocus();
+            event.preventDefault();
         } else if (event.key === 'Backspace') {
             this.handleBackspace();
+            event.preventDefault();
         }
-
-        event.preventDefault(); // Prevent default behavior
     }
 
     // Handle Backspace key
