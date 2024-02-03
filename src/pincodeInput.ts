@@ -96,8 +96,9 @@ class PincodeInput {
             grid.addEventListener('click', () => this.element.focus());
         });
 
-        // Add keyboard event listener for the hidden input
-        this.element.addEventListener('keydown', this.handleInput.bind(this));
+        // Add input and keyboard event listeners for the hidden input
+        this.element.addEventListener('input', this.onPinInput.bind(this));
+        this.element.addEventListener('keydown', this.handleKeydown.bind(this));
 
         // Bind grid click event to focus input and update focus
         this.element.addEventListener('focus', () => this.updateFocus());
@@ -130,14 +131,21 @@ class PincodeInput {
         });
     }
 
-    // Handle input event
-    private handleInput(event: KeyboardEvent): void {
-        if (/\d/.test(event.key) && this.element.value.length < this.element.maxLength) {
-            this.element.value += event.key;
-            Utils.updateVisiblePinCode(this.element, this._onInput, this._onComplete);
+    // Handle input event on the hidden input
+    private onPinInput(event: Event): void {
+        const input = event.target as HTMLInputElement;
+        if (input.value.length <= input.maxLength) {
+            Utils.updateVisiblePinCode(input, this._onInput, this._onComplete);
             this.updateFocus();
-            event.preventDefault();
-        } else if (event.key === 'Backspace') {
+        } else {
+            // Prevent the value from exceeding maxLength
+            input.value = input.value.slice(0, input.maxLength);
+        }
+    }
+
+    // Handle keydown event
+    private handleKeydown(event: KeyboardEvent): void {
+        if (event.key === 'Backspace') {
             this.handleBackspace();
             event.preventDefault();
         }
