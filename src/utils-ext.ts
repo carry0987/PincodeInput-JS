@@ -31,7 +31,7 @@ class Utils {
         return /^\d$/.test(key);
     }
 
-    static updateVisiblePinCode(element: HTMLInputElement, onChange?: OnChangeCallback, onComplete?: OnCompleteCallback): void {
+    static updateVisiblePinCode(element: HTMLInputElement, onInput?: OnChangeCallback, onComplete?: OnCompleteCallback): void {
         const value = element.value;
         const grids = Utils.getElem('.pincode-grid span', 'all') as NodeList;
 
@@ -40,7 +40,7 @@ class Utils {
         });
 
         // Call onchange event if defined
-        onChange?.(element.value, element.value.length - 1);
+        onInput?.(element.value, element.value.length - 1);
 
         // Call oncomplete event if defined and the pin code is complete
         if (element.value.length === element.maxLength) {

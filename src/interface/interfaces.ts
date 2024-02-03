@@ -2,7 +2,7 @@ export interface PincodeInputOptions {
     secret?: boolean; // Whether to show the input as password or text
     length?: number; // Maximum length of the input
     onLoad?: () => void; // Callback when the component is loaded
-    onChange?: (value: string, idx: number) => void; // Callback when any input changes
+    onInput?: (value: string, idx: number) => void; // Callback when any input changes
     onComplete?: (value: string) => void; // Callback when all inputs are filled
 }
 

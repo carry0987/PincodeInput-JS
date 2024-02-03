@@ -4,6 +4,6 @@ export const defaults: PincodeInputOptions = {
     secret: false,
     length: 6,
     onLoad: undefined,
-    onChange: undefined,
+    onInput: undefined,
     onComplete: undefined
 };

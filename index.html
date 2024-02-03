@@ -57,7 +57,10 @@
     document.addEventListener('DOMContentLoaded', () => {
         const pincodeInput = new PincodeInput('#pincode', {
             secret: false,
-            length: 4
+            length: 4,
+            onInput: (value) => {
+                document.getElementById('pincode-value').innerText = value;
+            }
         });
     });
     </script>

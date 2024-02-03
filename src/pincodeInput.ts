@@ -11,7 +11,7 @@ class PincodeInput {
     private targetIndex: number = 0;
 
     // Methods for external use
-    private _onChange: OnChangeCallback | undefined = undefined;
+    private _onInput: OnChangeCallback | undefined = undefined;
     private _onComplete: OnCompleteCallback | undefined = undefined;
 
     constructor(element: string | Element, option: PincodeInputOptions = {}) {
@@ -34,7 +34,7 @@ class PincodeInput {
         // Replace default options with user defined options
         this.options = Utils.deepMerge({}, defaults, option);
         // Set event handlers' callback if provided
-        this._onChange = option.onChange;
+        this._onInput = option.onInput;
         this._onComplete = option.onComplete;
         // Call the onLoad callback if provided
         this.options?.onLoad?.();
@@ -80,7 +80,7 @@ class PincodeInput {
         Utils.addClass(this.element, 'pincode-input');
         this.element.removeAttribute('hidden'); 
         // Setup the hidden input
-        this.element.type = options.secret ? 'password' : 'text';
+        this.element.type = options.secret ? 'password' : 'tel';
         this.element.pattern = '[0-9]*';
         this.element.inputMode = 'numeric';
         this.element.maxLength = maxLength!;
@@ -134,7 +134,7 @@ class PincodeInput {
     private handleInput(event: KeyboardEvent): void {
         if (/\d/.test(event.key) && this.element.value.length < this.element.maxLength) {
             this.element.value += event.key;
-            Utils.updateVisiblePinCode(this.element, this._onChange, this._onComplete);
+            Utils.updateVisiblePinCode(this.element, this._onInput, this._onComplete);
             this.updateFocus();
             event.preventDefault();
         } else if (event.key === 'Backspace') {
@@ -148,7 +148,7 @@ class PincodeInput {
         const value = this.element.value;
         if (value.length > 0) {
             this.element.value = value.slice(0, value.length - 1);
-            Utils.updateVisiblePinCode(this.element, this._onChange, this._onComplete);
+            Utils.updateVisiblePinCode(this.element, this._onInput, this._onComplete);
             this.updateFocus();
         }
     }
@@ -165,8 +165,8 @@ class PincodeInput {
     }
 
     // Methods for external use
-    set onChange(callback: OnChangeCallback) {
-        this._onChange = callback;
+    set onInput(callback: OnChangeCallback) {
+        this._onInput = callback;
     }
 
     set onComplete(callback: OnCompleteCallback) {
