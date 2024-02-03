@@ -103,16 +103,6 @@ class PincodeInput {
         // Add keyboard event listener for the hidden input
         this.element.addEventListener('keydown', this.handleInput.bind(this));
 
-        // Ensure that clicking on the pincode grids focuses the hidden input
-        const grids = Utils.getElem('.pincode-grid', 'all', pincodeWrapper) as NodeList;
-        grids.forEach(grid => {
-            grid.addEventListener('click', (e) => {
-                const ele = e.target as HTMLDivElement;
-                this.targetIndex = parseInt(ele.dataset.index!);
-                this.element.focus();
-            });
-        });
-
         // Bind grid click event to focus input and update focus
         this.element.addEventListener('focus', () => this.updateFocus());
         // Bind blur event to the hidden input to remove the focus class
@@ -127,6 +117,7 @@ class PincodeInput {
         const valueLength = this.element.value.length;
 
         grids.forEach((grid, index) => {
+            this.element.focus();
             const isFocused = (valueLength === this.element.maxLength) ? index === valueLength - 1 : index === valueLength;
             Utils.toggleClass(grid, 'pincode-focus', isFocused);
         });
