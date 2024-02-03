@@ -142,8 +142,8 @@ class PincodeInput {
     // Handle input event on the hidden input
     private onPinInput(event: Event): void {
         const input = event.target as HTMLInputElement;
+        const placeHolder = this.options.secure ? this.options.placeHolder : undefined;
         if (input.value.length <= input.maxLength) {
-            const placeHolder = this.options.secure ? this.options.placeHolder : undefined;
             Utils.updateVisiblePinCode(input, this._onInput, this._onComplete, placeHolder);
             this.updateFocus();
         } else {
@@ -163,9 +163,10 @@ class PincodeInput {
     // Handle Backspace key
     private handleBackspace(): void {
         const value = this.element.value;
+        const placeHolder = this.options.secure ? this.options.placeHolder : undefined;
         if (value.length > 0) {
             this.element.value = value.slice(0, value.length - 1);
-            Utils.updateVisiblePinCode(this.element, this._onInput, this._onComplete);
+            Utils.updateVisiblePinCode(this.element, this._onInput, this._onComplete, placeHolder);
             this.updateFocus();
         }
     }
