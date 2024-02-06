@@ -29,6 +29,7 @@
     document.addEventListener('DOMContentLoaded', () => {
         const pincodeInput = new PincodeInput('#pincode', {
             secure: false,
+            forceDigits: true,
             length: 6,
             styles: {
                 '.pincode-grid': {
