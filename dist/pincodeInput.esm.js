@@ -12,6 +12,7 @@ var errorUtils = /*#__PURE__*/Object.freeze({
 });
 
 function getElem(ele, mode, parent) {
+    // Return generic Element type or NodeList
     if (typeof ele !== 'string')
         return ele;
     let searchContext = document;
@@ -25,6 +26,7 @@ function getElem(ele, mode, parent) {
         searchContext = parent;
     }
     // If mode is 'all', search for all elements that match, otherwise, search for the first match
+    // Casting the result as E or NodeList
     return mode === 'all' ? searchContext.querySelectorAll(ele) : searchContext.querySelector(ele);
 }
 function createElem(tagName, attrs = {}, text = '') {
@@ -126,9 +128,9 @@ function compatInsertRule(stylesheet, selector, cssText, id = null) {
     stylesheet.insertRule(modifiedSelector + '{' + cssText + '}', 0);
 }
 function removeStylesheet(id = null) {
-    id = isEmpty(id) ? '' : id;
-    let styleElement = getElem('#' + stylesheetId + id);
-    if (styleElement) {
+    const styleId = isEmpty(id) ? '' : id;
+    let styleElement = getElem('#' + stylesheetId + styleId);
+    if (styleElement && styleElement.parentNode) {
         styleElement.parentNode.removeChild(styleElement);
     }
 }
@@ -205,6 +207,7 @@ const reportInfo = (vars, showType = false) => {
 const defaults = {
     secure: false,
     placeHolder: '•',
+    forceDigits: true,
     length: 6,
     styles: {},
     onLoad: undefined,
@@ -244,7 +247,7 @@ styleInject(css_248z);
 
 class PincodeInput {
     static instances = [];
-    static version = '1.0.2';
+    static version = '1.0.3';
     element;
     options;
     // Methods for external use
@@ -364,6 +367,10 @@ class PincodeInput {
     // Handle input event on the hidden input
     onPinInput(event) {
         const input = event.target;
+        if (this.options.forceDigits && input.value) {
+            // Remove any non-digit characters from the value
+            input.value = input.value.replace(/\D/g, '');
+        }
         const placeHolder = this.options.secure ? this.options.placeHolder : undefined;
         if (input.value.length <= input.maxLength) {
             Utils.updateVisiblePinCode(input, this._onInput, this._onComplete, placeHolder);
@@ -379,6 +386,14 @@ class PincodeInput {
         if (event.key === 'Backspace') {
             this.handleBackspace();
             event.preventDefault();
+            return;
+        }
+        // Limit input to digits if forceDigits is true
+        if (this.options.forceDigits) {
+            if (!Utils.isDigit(event.key)) {
+                // Prevent any key that's not a digit
+                event.preventDefault();
+            }
         }
     }
     // Handle Backspace key

@@ -142,6 +142,10 @@ class PincodeInput {
     // Handle input event on the hidden input
     private onPinInput(event: Event): void {
         const input = event.target as HTMLInputElement;
+        if (this.options.forceDigits && input.value) {
+            // Remove any non-digit characters from the value
+            input.value = input.value.replace(/\D/g, '');
+        }
         const placeHolder = this.options.secure ? this.options.placeHolder : undefined;
         if (input.value.length <= input.maxLength) {
             Utils.updateVisiblePinCode(input, this._onInput, this._onComplete, placeHolder);
@@ -157,6 +161,14 @@ class PincodeInput {
         if (event.key === 'Backspace') {
             this.handleBackspace();
             event.preventDefault();
+            return;
+        }
+        // Limit input to digits if forceDigits is true
+        if (this.options.forceDigits) {
+            if (!Utils.isDigit(event.key)) {
+                // Prevent any key that's not a digit
+                event.preventDefault();
+            }
         }
     }
 
@@ -171,7 +183,7 @@ class PincodeInput {
         }
     }
 
-    destroy(): void {
+    public destroy(): void {
         let id = PincodeInput.instances.indexOf(this);
         if (id < 0) {
             Utils.throwError('PincodeInput instance not found');

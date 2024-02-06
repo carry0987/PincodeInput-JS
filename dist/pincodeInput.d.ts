@@ -1,6 +1,7 @@
 interface PincodeInputOptions {
     secure?: boolean;
     placeHolder?: string;
+    forceDigits?: boolean;
     length?: number;
     styles?: Record<string, StylesObject>;
     onLoad?: () => void;
