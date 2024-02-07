@@ -11,8 +11,8 @@ class PincodeInput {
     private options!: PincodeInputOptions;
 
     // Methods for external use
-    private _onInput: OnChangeCallback | undefined = undefined;
-    private _onComplete: OnCompleteCallback | undefined = undefined;
+    private onInputCallback: OnChangeCallback | undefined = undefined;
+    private onCompleteCallback: OnCompleteCallback | undefined = undefined;
 
     constructor(element: string | Element, option: PincodeInputOptions = {}) {
         this.init(element, option);
@@ -34,8 +34,8 @@ class PincodeInput {
         // Replace default options with user defined options
         this.options = Utils.deepMerge({}, defaults, option);
         // Set event handlers' callback if provided
-        this._onInput = option.onInput;
-        this._onComplete = option.onComplete;
+        this.onInputCallback = option.onInput;
+        this.onCompleteCallback = option.onComplete;
         // Call the onLoad callback if provided
         this.options?.onLoad?.();
         // Create pincode grids
@@ -113,6 +113,11 @@ class PincodeInput {
         // Bind blur event to the hidden input to remove the focus class
         this.element.addEventListener('blur', this.removeFocus.bind(this), true);
 
+        // If autofocus is true, focus the hidden input
+        if (options.autoFocus) {
+            this.element.focus();
+        }
+
         return this;
     }
 
@@ -148,7 +153,7 @@ class PincodeInput {
         }
         const placeHolder = this.options.secure ? this.options.placeHolder : undefined;
         if (input.value.length <= input.maxLength) {
-            Utils.updateVisiblePinCode(input, this._onInput, this._onComplete, placeHolder);
+            Utils.updateVisiblePinCode(input, this.onInputCallback, this.onCompleteCallback, placeHolder);
             this.updateFocus();
         } else {
             // Prevent the value from exceeding maxLength
@@ -178,7 +183,7 @@ class PincodeInput {
         const placeHolder = this.options.secure ? this.options.placeHolder : undefined;
         if (value.length > 0) {
             this.element.value = value.slice(0, value.length - 1);
-            Utils.updateVisiblePinCode(this.element, this._onInput, this._onComplete, placeHolder);
+            Utils.updateVisiblePinCode(this.element, this.onInputCallback, this.onCompleteCallback, placeHolder);
             this.updateFocus();
         }
     }
@@ -195,12 +200,12 @@ class PincodeInput {
     }
 
     // Methods for external use
-    set onInput(callback: OnChangeCallback) {
-        this._onInput = callback;
+    public set onInput(callback: OnChangeCallback) {
+        this.onInputCallback = callback;
     }
 
-    set onComplete(callback: OnCompleteCallback) {
-        this._onComplete = callback;
+    public set onComplete(callback: OnCompleteCallback) {
+        this.onCompleteCallback = callback;
     }
 }
 

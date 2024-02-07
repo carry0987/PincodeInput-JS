@@ -169,25 +169,6 @@ class Utils {
             onComplete?.(element.value);
         }
     }
-    static buildStyles(baseSelector, checkedSelector, baseStyle, checkedStyle) {
-        let styles = {};
-        const arrayBuilder = (selector, styleValues, checked = false) => {
-            let space = selector.startsWith('::') ? '' : ' ';
-            if (!selector)
-                space = '.' + checkedSelector;
-            styles[`span.pincodeInput${checked ? '.' + checkedSelector : ''}${space}${selector}`] = styleValues;
-        };
-        if (typeof baseStyle === 'object' && typeof checkedStyle === 'object') {
-            arrayBuilder(baseSelector, baseStyle);
-            arrayBuilder(baseSelector, checkedStyle, true);
-        }
-        else {
-            for (let [selector, value] of Object.entries(baseStyle)) {
-                arrayBuilder(selector, value, !!selector);
-            }
-        }
-        return styles;
-    }
 }
 Utils.setStylesheetId('pincodeInput-style');
 Utils.setReplaceRule('.pincodeInput', '.pincodeInput');
@@ -205,6 +186,7 @@ const reportInfo = (vars, showType = false) => {
 };
 
 const defaults = {
+    autoFocus: false,
     secure: false,
     placeHolder: '•',
     forceDigits: true,
@@ -247,12 +229,12 @@ styleInject(css_248z);
 
 class PincodeInput {
     static instances = [];
-    static version = '1.0.3';
+    static version = '1.0.4';
     element;
     options;
     // Methods for external use
-    _onInput = undefined;
-    _onComplete = undefined;
+    onInputCallback = undefined;
+    onCompleteCallback = undefined;
     constructor(element, option = {}) {
         this.init(element, option);
         PincodeInput.instances.push(this);
@@ -273,8 +255,8 @@ class PincodeInput {
         // Replace default options with user defined options
         this.options = Utils.deepMerge({}, defaults, option);
         // Set event handlers' callback if provided
-        this._onInput = option.onInput;
-        this._onComplete = option.onComplete;
+        this.onInputCallback = option.onInput;
+        this.onCompleteCallback = option.onComplete;
         // Call the onLoad callback if provided
         this.options?.onLoad?.();
         // Create pincode grids
@@ -341,6 +323,10 @@ class PincodeInput {
         this.element.addEventListener('focus', () => this.updateFocus());
         // Bind blur event to the hidden input to remove the focus class
         this.element.addEventListener('blur', this.removeFocus.bind(this), true);
+        // If autofocus is true, focus the hidden input
+        if (options.autoFocus) {
+            this.element.focus();
+        }
         return this;
     }
     // Update the current focus grid based on the length of the input value
@@ -373,7 +359,7 @@ class PincodeInput {
         }
         const placeHolder = this.options.secure ? this.options.placeHolder : undefined;
         if (input.value.length <= input.maxLength) {
-            Utils.updateVisiblePinCode(input, this._onInput, this._onComplete, placeHolder);
+            Utils.updateVisiblePinCode(input, this.onInputCallback, this.onCompleteCallback, placeHolder);
             this.updateFocus();
         }
         else {
@@ -402,7 +388,7 @@ class PincodeInput {
         const placeHolder = this.options.secure ? this.options.placeHolder : undefined;
         if (value.length > 0) {
             this.element.value = value.slice(0, value.length - 1);
-            Utils.updateVisiblePinCode(this.element, this._onInput, this._onComplete, placeHolder);
+            Utils.updateVisiblePinCode(this.element, this.onInputCallback, this.onCompleteCallback, placeHolder);
             this.updateFocus();
         }
     }
@@ -418,10 +404,10 @@ class PincodeInput {
     }
     // Methods for external use
     set onInput(callback) {
-        this._onInput = callback;
+        this.onInputCallback = callback;
     }
     set onComplete(callback) {
-        this._onComplete = callback;
+        this.onCompleteCallback = callback;
     }
 }
 

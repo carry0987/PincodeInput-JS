@@ -12,7 +12,7 @@ import {
     toggleClass as _toggleClass
 } from '@carry0987/utils';
 
-import { StylesObject, OnChangeCallback, OnCompleteCallback } from '../interface/interfaces';
+import { OnChangeCallback, OnCompleteCallback } from '../interface/interfaces';
 
 class Utils {
     static throwError = _errorUtils.throwError;
@@ -46,35 +46,6 @@ class Utils {
         if (element.value.length === element.maxLength) {
             onComplete?.(element.value);
         }
-    }
-
-    static buildStyles(
-        baseSelector: string,
-        checkedSelector: string,
-        baseStyle: StylesObject,
-        checkedStyle?: StylesObject
-    ): Record<string, StylesObject> {
-        let styles: Record<string, StylesObject> = {};
-        const arrayBuilder = (
-            selector: string,
-            styleValues: StylesObject,
-            checked = false
-        ): void => {
-            let space = selector.startsWith('::') ? '' : ' ';
-            if (!selector) space = '.' + checkedSelector;
-            styles[`span.pincodeInput${checked ? '.' + checkedSelector : ''}${space}${selector}`] = styleValues;
-        };
-
-        if (typeof baseStyle === 'object' && typeof checkedStyle === 'object') {
-            arrayBuilder(baseSelector, baseStyle);
-            arrayBuilder(baseSelector, checkedStyle, true);
-        } else {
-            for (let [selector, value] of Object.entries(baseStyle)) {
-                arrayBuilder(selector, value as StylesObject, !!selector);
-            }
-        }
-
-        return styles;
     }
 }
 

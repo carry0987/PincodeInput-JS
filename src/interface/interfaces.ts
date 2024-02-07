@@ -1,4 +1,5 @@
 export interface PincodeInputOptions {
+    autoFocus?: boolean; // Whether to focus on the input when the component is loaded
     secure?: boolean; // Whether to show the input as password or text
     placeHolder?: string; // Placeholder for the secure input
     forceDigits?: boolean; // Whether to force the input to be digits only

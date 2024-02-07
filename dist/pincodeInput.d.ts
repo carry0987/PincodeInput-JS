@@ -1,4 +1,5 @@
 interface PincodeInputOptions {
+    autoFocus?: boolean;
     secure?: boolean;
     placeHolder?: string;
     forceDigits?: boolean;
@@ -23,8 +24,8 @@ declare class PincodeInput {
     private static version;
     private element;
     private options;
-    private _onInput;
-    private _onComplete;
+    private onInputCallback;
+    private onCompleteCallback;
     constructor(element: string | Element, option?: PincodeInputOptions);
     /**
      * Initialization
