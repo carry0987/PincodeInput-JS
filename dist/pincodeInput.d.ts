@@ -28,7 +28,7 @@ declare class PincodeInput {
     private options;
     private onInputCallback;
     private onCompleteCallback;
-    constructor(element: string | Element, option: PincodeInputOptions);
+    constructor(element: string | Element, option?: Partial<PincodeInputOptions>);
     /**
      * Initialization
      */

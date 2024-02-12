@@ -236,13 +236,13 @@ styleInject(css_248z);
 
 class PincodeInput {
     static instances = [];
-    static version = '1.0.7';
+    static version = '1.0.8';
     element;
     options;
     // Methods for external use
     onInputCallback = undefined;
     onCompleteCallback = undefined;
-    constructor(element, option) {
+    constructor(element, option = {}) {
         this.init(element, option);
         PincodeInput.instances.push(this);
         if (PincodeInput.instances.length === 1) {

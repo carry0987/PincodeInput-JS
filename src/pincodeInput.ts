@@ -14,7 +14,7 @@ class PincodeInput {
     private onInputCallback: OnChangeCallback | undefined = undefined;
     private onCompleteCallback: OnCompleteCallback | undefined = undefined;
 
-    constructor(element: string | Element, option: PincodeInputOptions) {
+    constructor(element: string | Element, option: Partial<PincodeInputOptions> = {}) {
         this.init(element, option);
         PincodeInput.instances.push(this);
 
@@ -26,7 +26,7 @@ class PincodeInput {
     /**
      * Initialization
      */
-    private init(element: string | Element, option: PincodeInputOptions): void {
+    private init(element: string | Element, option: Partial<PincodeInputOptions>): void {
         let elem = Utils.getElem(element);
         if (!elem) Utils.throwError('Element not found');
         if (!(elem instanceof HTMLInputElement)) Utils.throwError('Element must be an input field');
