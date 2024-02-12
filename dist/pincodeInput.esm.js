@@ -141,6 +141,10 @@ function isEmpty(str) {
     return !str || (typeof str === 'string' && str.length === 0);
 }
 
+function addEventListener(element, eventName, handler, options) {
+    element.addEventListener(eventName, handler, options);
+}
+
 class Utils {
     static throwError = errorUtils.throwError;
     static deepMerge = deepMerge;
@@ -153,6 +157,7 @@ class Utils {
     static addClass = addClass;
     static removeClass = removeClass;
     static toggleClass = toggleClass;
+    static addEventListener = addEventListener;
     static isDigit(key) {
         return /^\d$/.test(key);
     }
@@ -187,14 +192,15 @@ const reportInfo = (vars, showType = false) => {
 
 const defaults = {
     autoFocus: false,
+    allowEscape: true,
     secure: false,
     placeHolder: '•',
     forceDigits: true,
     length: 6,
     styles: {},
-    onLoad: undefined,
-    onInput: undefined,
-    onComplete: undefined
+    onLoad: () => { },
+    onInput: (value, idx) => { },
+    onComplete: (value) => { }
 };
 
 function styleInject(css, ref) {
@@ -229,13 +235,13 @@ styleInject(css_248z);
 
 class PincodeInput {
     static instances = [];
-    static version = '1.0.4';
+    static version = '1.0.5';
     element;
     options;
     // Methods for external use
     onInputCallback = undefined;
     onCompleteCallback = undefined;
-    constructor(element, option = {}) {
+    constructor(element, option) {
         this.init(element, option);
         PincodeInput.instances.push(this);
         if (PincodeInput.instances.length === 1) {
@@ -253,7 +259,7 @@ class PincodeInput {
             Utils.throwError('Element must be an input field');
         this.element = elem;
         // Replace default options with user defined options
-        this.options = Utils.deepMerge({}, defaults, option);
+        this.options = Utils.deepMerge(defaults, option);
         // Set event handlers' callback if provided
         this.onInputCallback = option.onInput;
         this.onCompleteCallback = option.onComplete;
@@ -313,16 +319,16 @@ class PincodeInput {
         // Insert pin code grids into pincode wrapper
         pincodeWrapper.appendChild(pinCode);
         // Bind click events to the grids to focus the hidden input
-        Utils.getElem('.pincode-grid', 'all', pincodeWrapper).forEach(grid => {
-            grid.addEventListener('click', () => this.element.focus());
+        (Utils.getElem('.pincode-grid', 'all', pincodeWrapper)).forEach(grid => {
+            Utils.addEventListener(grid, 'click', () => this.element.focus());
         });
         // Add input and keyboard event listeners for the hidden input
-        this.element.addEventListener('input', this.onPinInput.bind(this));
-        this.element.addEventListener('keydown', this.handleKeydown.bind(this));
+        Utils.addEventListener(this.element, 'input', this.onPinInput.bind(this));
+        Utils.addEventListener(this.element, 'keydown', this.handleKeydown.bind(this));
         // Bind grid click event to focus input and update focus
-        this.element.addEventListener('focus', () => this.updateFocus());
+        Utils.addEventListener(this.element, 'focus', () => this.updateFocus());
         // Bind blur event to the hidden input to remove the focus class
-        this.element.addEventListener('blur', this.removeFocus.bind(this), true);
+        Utils.addEventListener(this.element, 'blur', this.removeFocus.bind(this), true);
         // If autofocus is true, focus the hidden input
         if (options.autoFocus) {
             this.element.focus();
@@ -336,18 +342,18 @@ class PincodeInput {
         grids.forEach((grid, index) => {
             this.element.focus();
             if (index === valueLength) {
-                grid.classList.add('pincode-focus');
+                Utils.addClass(grid, 'pincode-focus');
             }
             else {
-                grid.classList.remove('pincode-focus');
+                Utils.removeClass(grid, 'pincode-focus');
             }
         });
     }
     // Remove focus from all grids
     removeFocus() {
-        const grids = document.querySelectorAll('.pincode-grid');
+        const grids = Utils.getElem('.pincode-grid', 'all');
         grids.forEach(grid => {
-            grid.classList.remove('pincode-focus');
+            Utils.removeClass(grid, 'pincode-focus');
         });
     }
     // Handle input event on the hidden input
@@ -374,6 +380,10 @@ class PincodeInput {
             event.preventDefault();
             return;
         }
+        if (event.key === 'Escape' && this.options.allowEscape) {
+            this.handleEscape();
+            return;
+        }
         // Limit input to digits if forceDigits is true
         if (this.options.forceDigits) {
             if (!Utils.isDigit(event.key)) {
@@ -392,6 +402,17 @@ class PincodeInput {
             this.updateFocus();
         }
     }
+    // Handle Escape key
+    handleEscape() {
+        this.clear();
+        this.element.blur();
+    }
+    // Clear the input value
+    clear() {
+        this.element.value = '';
+        this.element.dispatchEvent(new Event('input'));
+    }
+    // Destroy the instance
     destroy() {
         let id = PincodeInput.instances.indexOf(this);
         if (id < 0) {
@@ -408,6 +429,10 @@ class PincodeInput {
     }
     set onComplete(callback) {
         this.onCompleteCallback = callback;
+    }
+    // Get the value of the input
+    get value() {
+        return this.element.value;
     }
 }
 

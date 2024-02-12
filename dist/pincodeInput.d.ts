@@ -1,13 +1,14 @@
 interface PincodeInputOptions {
-    autoFocus?: boolean;
-    secure?: boolean;
-    placeHolder?: string;
-    forceDigits?: boolean;
-    length?: number;
-    styles?: Record<string, StylesObject>;
-    onLoad?: () => void;
-    onInput?: (value: string, idx: number) => void;
-    onComplete?: (value: string) => void;
+    autoFocus: boolean;
+    allowEscape: boolean;
+    secure: boolean;
+    placeHolder: string;
+    forceDigits: boolean;
+    length: number;
+    styles: Record<string, StylesObject>;
+    onLoad: () => void;
+    onInput: (value: string, idx: number) => void;
+    onComplete: (value: string) => void;
 }
 interface OnChangeCallback {
     (value: string, idx: number): void;
@@ -26,7 +27,7 @@ declare class PincodeInput {
     private options;
     private onInputCallback;
     private onCompleteCallback;
-    constructor(element: string | Element, option?: PincodeInputOptions);
+    constructor(element: string | Element, option: PincodeInputOptions);
     /**
      * Initialization
      */
@@ -37,9 +38,12 @@ declare class PincodeInput {
     private onPinInput;
     private handleKeydown;
     private handleBackspace;
+    private handleEscape;
+    clear(): void;
     destroy(): void;
     set onInput(callback: OnChangeCallback);
     set onComplete(callback: OnCompleteCallback);
+    get value(): string;
 }
 
 export { PincodeInput as default };

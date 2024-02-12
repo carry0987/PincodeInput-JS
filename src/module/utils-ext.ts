@@ -9,7 +9,8 @@ import {
     createElem as _createElem,
     addClass as _addClass,
     removeClass as _removeClass,
-    toggleClass as _toggleClass
+    toggleClass as _toggleClass,
+    addEventListener as _addEventListener
 } from '@carry0987/utils';
 
 import { OnChangeCallback, OnCompleteCallback } from '../interface/interfaces';
@@ -26,6 +27,7 @@ class Utils {
     static addClass = _addClass;
     static removeClass = _removeClass;
     static toggleClass = _toggleClass;
+    static addEventListener = _addEventListener;
 
     static isDigit(key: string): boolean {
         return /^\d$/.test(key);

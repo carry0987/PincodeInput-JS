@@ -2,12 +2,13 @@ import { PincodeInputOptions } from '../interface/interfaces';
 
 export const defaults: PincodeInputOptions = {
     autoFocus: false,
+    allowEscape: true,
     secure: false,
     placeHolder: '•',
     forceDigits: true,
     length: 6,
     styles: {},
-    onLoad: undefined,
-    onInput: undefined,
-    onComplete: undefined
+    onLoad: () => {},
+    onInput: (value: string, idx: number) => {},
+    onComplete: (value: string) => {}
 };

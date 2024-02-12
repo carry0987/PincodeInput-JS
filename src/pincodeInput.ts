@@ -14,7 +14,7 @@ class PincodeInput {
     private onInputCallback: OnChangeCallback | undefined = undefined;
     private onCompleteCallback: OnCompleteCallback | undefined = undefined;
 
-    constructor(element: string | Element, option: PincodeInputOptions = {}) {
+    constructor(element: string | Element, option: PincodeInputOptions) {
         this.init(element, option);
         PincodeInput.instances.push(this);
 
@@ -32,7 +32,7 @@ class PincodeInput {
         if (!(elem instanceof HTMLInputElement)) Utils.throwError('Element must be an input field');
         this.element = elem as HTMLInputElement;
         // Replace default options with user defined options
-        this.options = Utils.deepMerge({}, defaults, option);
+        this.options = Utils.deepMerge<PincodeInputOptions>(defaults, option);
         // Set event handlers' callback if provided
         this.onInputCallback = option.onInput;
         this.onCompleteCallback = option.onComplete;
@@ -63,7 +63,7 @@ class PincodeInput {
         pinCode.className = 'pincode';
 
         // Create visible pin code grids and append them to the wrapper
-        for (let i = 0; i < maxLength!; i++) {
+        for (let i = 0; i < maxLength; i++) {
             const grid = Utils.createElem('div') as HTMLDivElement;
             const span = Utils.createElem('span') as HTMLSpanElement;
             grid.className = 'pincode-grid';
@@ -91,7 +91,7 @@ class PincodeInput {
         this.element.type = options.secure ? 'password' : 'text';
         this.element.pattern = '[0-9]*';
         this.element.inputMode = 'numeric';
-        this.element.maxLength = maxLength!;
+        this.element.maxLength = maxLength;
         this.element.autocomplete = 'off';
         // Append the original input to the wrapper
         pincodeWrapper.appendChild(this.element);
@@ -100,18 +100,18 @@ class PincodeInput {
         pincodeWrapper.appendChild(pinCode);
 
         // Bind click events to the grids to focus the hidden input
-        (Utils.getElem('.pincode-grid', 'all', pincodeWrapper) as NodeList).forEach(grid => {
-            grid.addEventListener('click', () => this.element.focus());
+        (Utils.getElem('.pincode-grid', 'all', pincodeWrapper)).forEach(grid => {
+            Utils.addEventListener(grid, 'click', () => this.element.focus());
         });
 
         // Add input and keyboard event listeners for the hidden input
-        this.element.addEventListener('input', this.onPinInput.bind(this));
-        this.element.addEventListener('keydown', this.handleKeydown.bind(this));
+        Utils.addEventListener(this.element, 'input', this.onPinInput.bind(this));
+        Utils.addEventListener(this.element, 'keydown', this.handleKeydown.bind(this));
 
         // Bind grid click event to focus input and update focus
-        this.element.addEventListener('focus', () => this.updateFocus());
+        Utils.addEventListener(this.element, 'focus', () => this.updateFocus());
         // Bind blur event to the hidden input to remove the focus class
-        this.element.addEventListener('blur', this.removeFocus.bind(this), true);
+        Utils.addEventListener(this.element, 'blur', this.removeFocus.bind(this), true);
 
         // If autofocus is true, focus the hidden input
         if (options.autoFocus) {
@@ -129,18 +129,18 @@ class PincodeInput {
         grids.forEach((grid, index) => {
             this.element.focus();
             if (index === valueLength) {
-                grid.classList.add('pincode-focus');
+                Utils.addClass(grid, 'pincode-focus');
             } else {
-                grid.classList.remove('pincode-focus');
+                Utils.removeClass(grid, 'pincode-focus');
             }
         });
     }
 
     // Remove focus from all grids
     private removeFocus(): void {
-        const grids = document.querySelectorAll('.pincode-grid');
+        const grids = Utils.getElem('.pincode-grid', 'all');
         grids.forEach(grid => {
-            grid.classList.remove('pincode-focus');
+            Utils.removeClass(grid, 'pincode-focus');
         });
     }
 
@@ -168,6 +168,10 @@ class PincodeInput {
             event.preventDefault();
             return;
         }
+        if (event.key === 'Escape' && this.options.allowEscape) {
+            this.handleEscape();
+            return;
+        }
         // Limit input to digits if forceDigits is true
         if (this.options.forceDigits) {
             if (!Utils.isDigit(event.key)) {
@@ -188,6 +192,19 @@ class PincodeInput {
         }
     }
 
+    // Handle Escape key
+    private handleEscape(): void {
+        this.clear();
+        this.element.blur();
+    }
+
+    // Clear the input value
+    public clear(): void {
+        this.element.value = '';
+        this.element.dispatchEvent(new Event('input'));
+    }
+
+    // Destroy the instance
     public destroy(): void {
         let id = PincodeInput.instances.indexOf(this);
         if (id < 0) {
@@ -206,6 +223,11 @@ class PincodeInput {
 
     public set onComplete(callback: OnCompleteCallback) {
         this.onCompleteCallback = callback;
+    }
+
+    // Get the value of the input
+    public get value(): string {
+        return this.element.value;
     }
 }
 
