@@ -193,6 +193,7 @@ const reportInfo = (vars, showType = false) => {
 const defaults = {
     autoFocus: false,
     allowEscape: true,
+    allowPaste: true,
     secure: false,
     placeHolder: '•',
     forceDigits: true,
@@ -235,7 +236,7 @@ styleInject(css_248z);
 
 class PincodeInput {
     static instances = [];
-    static version = '1.0.5';
+    static version = '1.0.7';
     element;
     options;
     // Methods for external use
@@ -325,6 +326,8 @@ class PincodeInput {
         // Add input and keyboard event listeners for the hidden input
         Utils.addEventListener(this.element, 'input', this.onPinInput.bind(this));
         Utils.addEventListener(this.element, 'keydown', this.handleKeydown.bind(this));
+        // Handle paste event
+        Utils.addEventListener(this.element, 'paste', this.handlePaste.bind(this));
         // Bind grid click event to focus input and update focus
         Utils.addEventListener(this.element, 'focus', () => this.updateFocus());
         // Bind blur event to the hidden input to remove the focus class
@@ -375,6 +378,10 @@ class PincodeInput {
     }
     // Handle keydown event
     handleKeydown(event) {
+        // Allow paste shortcut (Ctrl+V or Cmd+V) regardless of forceDigits
+        const isPasteShortcut = (event.ctrlKey || event.metaKey) && event.key === 'v';
+        if (isPasteShortcut)
+            return; // Do not prevent the default paste action
         if (event.key === 'Backspace') {
             this.handleBackspace();
             event.preventDefault();
@@ -385,7 +392,7 @@ class PincodeInput {
             return;
         }
         // Limit input to digits if forceDigits is true
-        if (this.options.forceDigits) {
+        if (this.options.forceDigits && !isPasteShortcut) {
             if (!Utils.isDigit(event.key)) {
                 // Prevent any key that's not a digit
                 event.preventDefault();
@@ -406,6 +413,27 @@ class PincodeInput {
     handleEscape() {
         this.clear();
         this.element.blur();
+    }
+    // Handle paste event
+    handlePaste(event) {
+        if (!this.options.allowPaste) {
+            event.preventDefault();
+            return;
+        }
+        const clipboardData = event.clipboardData;
+        if (!clipboardData)
+            return;
+        const pastedData = clipboardData.getData('text').slice(0, this.element.maxLength);
+        if (this.options.forceDigits) {
+            // Remove any non-digit characters from the pasted data
+            this.element.value = pastedData.replace(/\D/g, '');
+        }
+        else {
+            this.element.value = pastedData;
+        }
+        Utils.updateVisiblePinCode(this.element, this.onInputCallback, this.onCompleteCallback, this.options.secure ? this.options.placeHolder : undefined);
+        this.updateFocus();
+        event.preventDefault(); // Prevent the default paste action
     }
     // Clear the input value
     clear() {

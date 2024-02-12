@@ -3,6 +3,7 @@ import { PincodeInputOptions } from '../interface/interfaces';
 export const defaults: PincodeInputOptions = {
     autoFocus: false,
     allowEscape: true,
+    allowPaste: true,
     secure: false,
     placeHolder: '•',
     forceDigits: true,

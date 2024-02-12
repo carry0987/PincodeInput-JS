@@ -1,6 +1,7 @@
 interface PincodeInputOptions {
     autoFocus: boolean;
     allowEscape: boolean;
+    allowPaste: boolean;
     secure: boolean;
     placeHolder: string;
     forceDigits: boolean;
@@ -39,6 +40,7 @@ declare class PincodeInput {
     private handleKeydown;
     private handleBackspace;
     private handleEscape;
+    private handlePaste;
     clear(): void;
     destroy(): void;
     set onInput(callback: OnChangeCallback);
