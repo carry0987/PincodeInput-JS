@@ -236,9 +236,9 @@ styleInject(css_248z);
 
 class PincodeInput {
     static instances = [];
-    static version = '1.0.8';
+    static version = '1.0.9';
     element;
-    options;
+    options = defaults;
     // Methods for external use
     onInputCallback = undefined;
     onCompleteCallback = undefined;
@@ -260,7 +260,7 @@ class PincodeInput {
             Utils.throwError('Element must be an input field');
         this.element = elem;
         // Replace default options with user defined options
-        this.options = Utils.deepMerge(defaults, option);
+        this.options = Utils.deepMerge({}, defaults, option);
         // Set event handlers' callback if provided
         this.onInputCallback = option.onInput;
         this.onCompleteCallback = option.onComplete;

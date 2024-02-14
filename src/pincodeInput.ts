@@ -8,7 +8,7 @@ class PincodeInput {
     private static instances: PincodeInput[] = [];
     private static version: string = '__version__';
     private element!: HTMLInputElement;
-    private options!: PincodeInputOptions;
+    private options: PincodeInputOptions = defaults;
 
     // Methods for external use
     private onInputCallback: OnChangeCallback | undefined = undefined;
@@ -32,7 +32,7 @@ class PincodeInput {
         if (!(elem instanceof HTMLInputElement)) Utils.throwError('Element must be an input field');
         this.element = elem as HTMLInputElement;
         // Replace default options with user defined options
-        this.options = Utils.deepMerge<PincodeInputOptions>(defaults, option);
+        this.options = Utils.deepMerge({} as PincodeInputOptions, defaults, option);
         // Set event handlers' callback if provided
         this.onInputCallback = option.onInput;
         this.onCompleteCallback = option.onComplete;
@@ -126,7 +126,7 @@ class PincodeInput {
 
     // Update the current focus grid based on the length of the input value
     private updateFocus(): void {
-        const grids = Array.from(Utils.getElem('.pincode-grid', 'all') as NodeList) as HTMLDivElement[];
+        const grids = Array.from(Utils.getElem('.pincode-grid', 'all')) as HTMLDivElement[];
         const valueLength = this.element.value.length;
 
         grids.forEach((grid, index) => {
