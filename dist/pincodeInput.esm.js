@@ -13,8 +13,12 @@ var errorUtils = /*#__PURE__*/Object.freeze({
 
 function getElem(ele, mode, parent) {
     // Return generic Element type or NodeList
-    if (typeof ele !== 'string')
+    if (typeof ele !== 'string') {
+        if (mode === 'all') {
+            return [ele];
+        }
         return ele;
+    }
     let searchContext = document;
     if (mode === null && parent) {
         searchContext = parent;
@@ -236,7 +240,7 @@ styleInject(css_248z);
 
 class PincodeInput {
     static instances = [];
-    static version = '1.0.9';
+    static version = '1.0.10';
     element;
     options = defaults;
     // Methods for external use
@@ -253,7 +257,13 @@ class PincodeInput {
      * Initialization
      */
     init(element, option) {
-        let elem = Utils.getElem(element);
+        let elem;
+        if (typeof element === 'string') {
+            elem = Utils.getElem(element);
+        }
+        else {
+            elem = element;
+        }
         if (!elem)
             Utils.throwError('Element not found');
         if (!(elem instanceof HTMLInputElement))

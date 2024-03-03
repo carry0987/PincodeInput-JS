@@ -27,7 +27,12 @@ class PincodeInput {
      * Initialization
      */
     private init(element: string | Element, option: Partial<PincodeInputOptions>): void {
-        let elem = Utils.getElem(element);
+        let elem: Element | null;
+        if (typeof element === 'string') {
+            elem = Utils.getElem(element);
+        } else {
+            elem = element;
+        }
         if (!elem) Utils.throwError('Element not found');
         if (!(elem instanceof HTMLInputElement)) Utils.throwError('Element must be an input field');
         this.element = elem as HTMLInputElement;
