@@ -263,4 +263,5 @@ class PincodeInput {
     }
 }
 
-export default PincodeInput;
+export { PincodeInput as default };
+export * from './interface/interfaces';

@@ -240,7 +240,7 @@ styleInject(css_248z);
 
 class PincodeInput {
     static instances = [];
-    static version = '1.0.10';
+    static version = '1.0.11';
     element;
     options = defaults;
     // Methods for external use

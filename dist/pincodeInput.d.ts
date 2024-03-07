@@ -11,6 +11,9 @@ interface PincodeInputOptions {
     onInput: (value: string, idx: number) => void;
     onComplete: (value: string) => void;
 }
+interface CompleteEventDetail {
+    value: string;
+}
 interface OnChangeCallback {
     (value: string, idx: number): void;
 }
@@ -48,4 +51,4 @@ declare class PincodeInput {
     get value(): string;
 }
 
-export { PincodeInput as default };
+export { type CompleteEventDetail, type OnChangeCallback, type OnCompleteCallback, type PincodeInputOptions, type StylesObject, PincodeInput as default };
