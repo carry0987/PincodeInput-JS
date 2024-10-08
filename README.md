@@ -16,7 +16,7 @@ Features of `PincodeInput-JS` include:
 ## Installation
 To install `PincodeInput-JS` in your project, simply run the following command in your terminal:
 ```bash
-npm i @carry0987/pincode-input
+pnpm i @carry0987/pincode-input
 ```
 
 ## Usage
