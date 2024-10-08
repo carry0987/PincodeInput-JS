@@ -1,5 +1,6 @@
 # PincodeInput-JS
-[![NPM](https://img.shields.io/npm/v/@carry0987/pincode-input.svg)](https://www.npmjs.com/package/@carry0987/pincode-input)  
+[![NPM](https://img.shields.io/npm/v/@carry0987/pincode-input.svg)](https://www.npmjs.com/package/@carry0987/pincode-input)
+![CI](https://github.com/carry0987/PincodeInput-JS/actions/workflows/ci.yml/badge.svg)  
 Seamlessly create a user-friendly PIN code input experience with `PincodeInput-JS`. This lightweight JavaScript library is specially designed to handle numeric input fields required for Two-Factor Authentication (2FA) and other security-related use cases. It elegantly manages the focus transition between individual digit fields, ensuring a smooth and intuitive entry process similar to professional financial and security applications.
 
 Features of `PincodeInput-JS` include:
