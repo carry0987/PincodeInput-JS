@@ -224,7 +224,7 @@ const defaults = {
 
 class PincodeInput {
     static instances = [];
-    static version = '1.0.12';
+    static version = '1.0.13';
     element;
     options = defaults;
     // Methods for external use
@@ -314,7 +314,7 @@ class PincodeInput {
         // Insert pin code grids into pincode wrapper
         pincodeWrapper.appendChild(pinCode);
         // Bind click events to the grids to focus the hidden input
-        (Utils.getElem('.pincode-grid', 'all', pincodeWrapper)).forEach(grid => {
+        Utils.getElem('.pincode-grid', 'all', pincodeWrapper).forEach((grid) => {
             Utils.addEventListener(grid, 'click', () => this.element.focus());
         });
         // Add input and keyboard event listeners for the hidden input
@@ -349,7 +349,7 @@ class PincodeInput {
     // Remove focus from all grids
     removeFocus() {
         const grids = Utils.getElem('.pincode-grid', 'all');
-        grids.forEach(grid => {
+        grids.forEach((grid) => {
             Utils.removeClass(grid, 'pincode-focus');
         });
     }

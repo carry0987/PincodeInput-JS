@@ -91,7 +91,7 @@ class PincodeInput {
 
         // Add class to the hidden input
         Utils.addClass(this.element, 'pincode-input');
-        this.element.removeAttribute('hidden'); 
+        this.element.removeAttribute('hidden');
         // Setup the hidden input
         this.element.type = options.secure ? 'password' : 'text';
         this.element.pattern = '[0-9]*';
@@ -105,7 +105,7 @@ class PincodeInput {
         pincodeWrapper.appendChild(pinCode);
 
         // Bind click events to the grids to focus the hidden input
-        (Utils.getElem('.pincode-grid', 'all', pincodeWrapper)).forEach(grid => {
+        Utils.getElem('.pincode-grid', 'all', pincodeWrapper).forEach((grid) => {
             Utils.addEventListener(grid, 'click', () => this.element.focus());
         });
 
@@ -147,7 +147,7 @@ class PincodeInput {
     // Remove focus from all grids
     private removeFocus(): void {
         const grids = Utils.getElem('.pincode-grid', 'all');
-        grids.forEach(grid => {
+        grids.forEach((grid) => {
             Utils.removeClass(grid, 'pincode-focus');
         });
     }
@@ -225,7 +225,12 @@ class PincodeInput {
         } else {
             this.element.value = pastedData;
         }
-        Utils.updateVisiblePinCode(this.element, this.onInputCallback, this.onCompleteCallback, this.options.secure ? this.options.placeHolder : undefined);
+        Utils.updateVisiblePinCode(
+            this.element,
+            this.onInputCallback,
+            this.onCompleteCallback,
+            this.options.secure ? this.options.placeHolder : undefined
+        );
         this.updateFocus();
         event.preventDefault(); // Prevent the default paste action
     }

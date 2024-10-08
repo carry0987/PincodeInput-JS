@@ -33,7 +33,12 @@ class Utils {
         return /^\d$/.test(key);
     }
 
-    static updateVisiblePinCode(element: HTMLInputElement, onInput?: OnChangeCallback, onComplete?: OnCompleteCallback, secret?: string): void {
+    static updateVisiblePinCode(
+        element: HTMLInputElement,
+        onInput?: OnChangeCallback,
+        onComplete?: OnCompleteCallback,
+        secret?: string
+    ): void {
         const value = element.value;
         const grids = Utils.getElem('.pincode-grid span', 'all') as NodeList;
 
