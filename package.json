@@ -1,18 +1,26 @@
 {
   "name": "@carry0987/pincode-input",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "Smooth auto-advancing PIN entry",
   "type": "module",
   "main": "dist/pincodeInput.min.js",
   "module": "dist/pincodeInput.esm.js",
-  "types": "dist/pincodeInput.d.ts",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "umd": "./dist/pincodeInput.min.js",
+      "import": "./dist/pincodeInput.esm.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./style/pincodeInput.min.css": "./dist/pincodeInput.min.css"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "rollup --config rollup.config.js",
-    "build": "rollup --config rollup.config.js --environment BUILD:production"
+    "start": "rollup --config rollup.config.ts --configPlugin typescript",
+    "build": "rollup --config rollup.config.ts --configPlugin typescript --environment BUILD:production"
   },
   "files": [
-    "dist"
+    "dist/*"
   ],
   "repository": {
     "type": "git",
@@ -29,16 +37,17 @@
   },
   "homepage": "https://github.com/carry0987/PincodeInput-JS#readme",
   "devDependencies": {
-    "@carry0987/utils": "^3.2.14",
-    "@rollup/plugin-node-resolve": "^15.2.3",
-    "@rollup/plugin-replace": "^5.0.5",
+    "@carry0987/utils": "^3.7.7",
+    "@rollup/plugin-node-resolve": "^15.3.0",
+    "@rollup/plugin-replace": "^6.0.1",
     "@rollup/plugin-terser": "^0.4.4",
-    "@rollup/plugin-typescript": "^11.1.6",
-    "rollup": "^4.12.1",
-    "rollup-plugin-delete": "^2.0.0",
-    "rollup-plugin-dts": "^6.1.0",
+    "@rollup/plugin-typescript": "^12.1.0",
+    "rollup": "^4.24.0",
+    "rollup-plugin-delete": "^2.1.0",
+    "rollup-plugin-dts": "^6.1.1",
     "rollup-plugin-postcss": "^4.0.2",
-    "tslib": "^2.6.2",
-    "typescript": "^5.4.2"
+    "rollup-plugin-tsconfig-paths": "^1.5.2",
+    "tslib": "^2.7.0",
+    "typescript": "^5.6.2"
   }
 }

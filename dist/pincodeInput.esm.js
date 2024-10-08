@@ -14,9 +14,6 @@ var errorUtils = /*#__PURE__*/Object.freeze({
 function getElem(ele, mode, parent) {
     // Return generic Element type or NodeList
     if (typeof ele !== 'string') {
-        if (mode === 'all') {
-            return [ele];
-        }
         return ele;
     }
     let searchContext = document;
@@ -68,7 +65,30 @@ const replaceRule = {
     to: '.utils-'
 };
 function isObject(item) {
-    return typeof item === 'object' && item !== null && !Array.isArray(item);
+    return typeof item === 'object' && item !== null && !isArray(item);
+}
+function isArray(item) {
+    return Array.isArray(item);
+}
+function isEmpty(value) {
+    // Check for number
+    if (typeof value === 'number') {
+        return false;
+    }
+    // Check for string
+    if (typeof value === 'string' && value.length === 0) {
+        return true;
+    }
+    // Check for array
+    if (isArray(value) && value.length === 0) {
+        return true;
+    }
+    // Check for object
+    if (isObject(value) && Object.keys(value).length === 0) {
+        return true;
+    }
+    // Check for any falsy values
+    return !value;
 }
 function deepMerge(target, ...sources) {
     if (!sources.length)
@@ -80,9 +100,9 @@ function deepMerge(target, ...sources) {
                 const sourceKey = key;
                 const value = source[sourceKey];
                 const targetKey = key;
-                if (isObject(value)) {
+                if (isObject(value) || isArray(value)) {
                     if (!target[targetKey] || typeof target[targetKey] !== 'object') {
-                        target[targetKey] = {};
+                        target[targetKey] = isArray(value) ? [] : {};
                     }
                     deepMerge(target[targetKey], value);
                 }
@@ -137,12 +157,6 @@ function removeStylesheet(id = null) {
     if (styleElement && styleElement.parentNode) {
         styleElement.parentNode.removeChild(styleElement);
     }
-}
-function isEmpty(str) {
-    if (typeof str === 'number') {
-        return false;
-    }
-    return !str || (typeof str === 'string' && str.length === 0);
 }
 
 function addEventListener(element, eventName, handler, options) {
@@ -208,39 +222,9 @@ const defaults = {
     onComplete: (value) => { }
 };
 
-function styleInject(css, ref) {
-  if ( ref === void 0 ) ref = {};
-  var insertAt = ref.insertAt;
-
-  if (!css || typeof document === 'undefined') { return; }
-
-  var head = document.head || document.getElementsByTagName('head')[0];
-  var style = document.createElement('style');
-  style.type = 'text/css';
-
-  if (insertAt === 'top') {
-    if (head.firstChild) {
-      head.insertBefore(style, head.firstChild);
-    } else {
-      head.appendChild(style);
-    }
-  } else {
-    head.appendChild(style);
-  }
-
-  if (style.styleSheet) {
-    style.styleSheet.cssText = css;
-  } else {
-    style.appendChild(document.createTextNode(css));
-  }
-}
-
-var css_248z = ".pincode {\n    display: flex;\n    flex-direction: row;\n    align-items: center;\n    justify-content: center;\n}\n.pincode-input {\n    position: absolute;\n    left: -9999px;\n    width: 1px;\n    height: 1px;\n    opacity: 0;\n    pointer-events: none;\n}\n.pincode-grid {\n    box-sizing: border-box;\n    width: 42px;\n    height: 56px;\n    outline: none;\n    border-bottom: 1px solid #b2b2b2;\n    font-size: 45px;\n    font-weight: 700;\n    text-align: center;\n    margin: 0 5px;\n}\n.pincode-focus {\n    border-bottom: 2px solid #007bff;\n}\n";
-styleInject(css_248z);
-
 class PincodeInput {
     static instances = [];
-    static version = '1.0.11';
+    static version = '1.0.12';
     element;
     options = defaults;
     // Methods for external use

@@ -1,4 +1,4 @@
-import { PincodeInputOptions } from '../interface/interfaces';
+import { PincodeInputOptions } from '@/interface/interfaces';
 
 export const defaults: PincodeInputOptions = {
     autoFocus: false,

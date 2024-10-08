@@ -13,7 +13,7 @@ import {
     addEventListener as _addEventListener
 } from '@carry0987/utils';
 
-import { OnChangeCallback, OnCompleteCallback } from '../interface/interfaces';
+import { OnChangeCallback, OnCompleteCallback } from '@/interface/interfaces';
 
 class Utils {
     static throwError = _errorUtils.throwError;

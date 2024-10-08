@@ -1,8 +1,8 @@
-import Utils from './module/utils-ext';
-import reportInfo from './module/report';
-import { PincodeInputOptions, OnChangeCallback, OnCompleteCallback } from './interface/interfaces';
-import { defaults } from './module/config';
-import './style/pincodeInput.css';
+import Utils from '@/module/utils-ext';
+import reportInfo from '@/module/report';
+import { defaults } from '@/module/config';
+import { PincodeInputOptions, OnChangeCallback, OnCompleteCallback } from '@/interface/interfaces';
+import '@/style/pincodeInput.css';
 
 class PincodeInput {
     private static instances: PincodeInput[] = [];
