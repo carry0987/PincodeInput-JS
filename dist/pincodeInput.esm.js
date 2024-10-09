@@ -1,3 +1,17 @@
+const defaults = {
+    autoFocus: false,
+    allowEscape: true,
+    allowPaste: true,
+    secure: false,
+    placeHolder: '•',
+    forceDigits: true,
+    length: 6,
+    styles: {},
+    onLoad: () => { },
+    onInput: (value, idx) => { },
+    onComplete: (value) => { }
+};
+
 function reportError(...error) {
     console.error(...error);
 }
@@ -208,23 +222,9 @@ const reportInfo = (vars, showType = false) => {
     }
 };
 
-const defaults = {
-    autoFocus: false,
-    allowEscape: true,
-    allowPaste: true,
-    secure: false,
-    placeHolder: '•',
-    forceDigits: true,
-    length: 6,
-    styles: {},
-    onLoad: () => { },
-    onInput: (value, idx) => { },
-    onComplete: (value) => { }
-};
-
 class PincodeInput {
     static instances = [];
-    static version = '1.0.13';
+    static version = '1.1.0';
     element;
     options = defaults;
     // Methods for external use
@@ -458,4 +458,8 @@ class PincodeInput {
     }
 }
 
-export { PincodeInput as default };
+var interfaces = /*#__PURE__*/Object.freeze({
+    __proto__: null
+});
+
+export { PincodeInput, interfaces as PincodeInputInterface };

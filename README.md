@@ -20,6 +20,44 @@ pnpm i @carry0987/pincode-input
 ```
 
 ## Usage
-You can see the example here:  
+
+#### UMD
+You can see the **`UMD`** example here:  
 **[Code](./index.html)**  
 **[Demo](https://carry0987.github.io/PincodeInput-JS/)**
+
+#### ES Module
+```ts
+import { PincodeInput } from '@carry0987/pincode-input';
+
+const pincodeInput = new PincodeInput('#pincode', {
+    autoFocus: true,
+    allowPaste: true,
+    secure: false,
+    forceDigits: true,
+    length: 6,
+    styles: {
+        '.pincode-grid': {
+            'margin': '5px',
+            'padding': '5px',
+            'width': '50px',
+            'text-align': 'center',
+            'text-align': 'center',
+            'line-height': 'normal',
+            'display': 'flex',
+            'align-items': 'center',
+            'justify-content': 'center'
+        },
+        '.pincode-grid.pincode-focus': {
+            'border-bottom': '5px solid #007bff'
+        }
+    },
+    onInput: (value, idx) => {
+        document.getElementById('pincode-value').innerText = value;
+        console.log(idx);
+    },
+    onComplete: (value) => {
+        console.log('Complete', pincodeInput.value);
+    }
+});
+```

@@ -1,3 +1,4 @@
+import { RollupOptions } from 'rollup';
 import typescript from '@rollup/plugin-typescript';
 import terser from '@rollup/plugin-terser';
 import replace from '@rollup/plugin-replace';
@@ -11,16 +12,16 @@ import path from 'path';
 
 const pkg = createRequire(import.meta.url)('./package.json');
 const isProduction = process.env.BUILD === 'production';
-const sourceFile = 'src/pincodeInput.ts';
+const sourceFile = 'src/index.ts';
 
 // JS Config
-const jsConfig = {
+const jsConfig: RollupOptions = {
     input: sourceFile,
     output: [
         {
             file: pkg.exports['.']['umd'],
             format: 'umd',
-            name: 'PincodeInput',
+            name: 'pincodeInputjs',
             plugins: isProduction ? [terser()] : []
         }
     ],
@@ -41,7 +42,7 @@ const jsConfig = {
 };
 
 // ES Config
-const esConfig = {
+const esConfig: RollupOptions = {
     input: sourceFile,
     output: [
         {
@@ -66,13 +67,13 @@ const esConfig = {
 };
 
 // DTS Config
-const dtsConfig = {
+const dtsConfig: RollupOptions = {
     input: sourceFile,
     output: {
         file: pkg.exports['.']['types'],
         format: 'es'
     },
-    external: [/\.css$/u],
+    external: [/\.scss$/u],
     plugins: [
         tsConfigPaths(),
         dts(),

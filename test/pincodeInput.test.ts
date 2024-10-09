@@ -1,4 +1,4 @@
-import PincodeInput from '@/pincodeInput';
+import { PincodeInput } from '@/index';
 import { PincodeInputOptions } from '@/interface/interfaces';
 import { describe, it, expect, beforeEach } from 'vitest';
 

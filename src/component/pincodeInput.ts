@@ -1,8 +1,8 @@
+import { defaults } from '@/component/config';
 import Utils from '@/module/utils-ext';
 import reportInfo from '@/module/report';
-import { defaults } from '@/module/config';
 import { PincodeInputOptions, OnChangeCallback, OnCompleteCallback } from '@/interface/interfaces';
-import '@/style/pincodeInput.css';
+import '@/style/index.scss';
 
 class PincodeInput {
     private static instances: PincodeInput[] = [];
@@ -268,5 +268,4 @@ class PincodeInput {
     }
 }
 
-export { PincodeInput as default };
-export * from './interface/interfaces';
+export { PincodeInput };

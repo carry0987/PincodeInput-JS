@@ -24,6 +24,15 @@ interface StylesObject {
     [selector: string]: string | number | StylesObject;
 }
 
+type interfaces_CompleteEventDetail = CompleteEventDetail;
+type interfaces_OnChangeCallback = OnChangeCallback;
+type interfaces_OnCompleteCallback = OnCompleteCallback;
+type interfaces_PincodeInputOptions = PincodeInputOptions;
+type interfaces_StylesObject = StylesObject;
+declare namespace interfaces {
+  export type { interfaces_CompleteEventDetail as CompleteEventDetail, interfaces_OnChangeCallback as OnChangeCallback, interfaces_OnCompleteCallback as OnCompleteCallback, interfaces_PincodeInputOptions as PincodeInputOptions, interfaces_StylesObject as StylesObject };
+}
+
 declare class PincodeInput {
     private static instances;
     private static version;
@@ -51,4 +60,4 @@ declare class PincodeInput {
     get value(): string;
 }
 
-export { type CompleteEventDetail, type OnChangeCallback, type OnCompleteCallback, type PincodeInputOptions, type StylesObject, PincodeInput as default };
+export { PincodeInput, interfaces as PincodeInputInterface };
