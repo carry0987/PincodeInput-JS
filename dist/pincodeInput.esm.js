@@ -224,7 +224,7 @@ const reportInfo = (vars, showType = false) => {
 
 class PincodeInput {
     static instances = [];
-    static version = '1.1.0';
+    static version = '1.1.1';
     element;
     options = defaults;
     // Methods for external use
