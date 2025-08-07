@@ -16,6 +16,8 @@ import {
 import { OnChangeCallback, OnCompleteCallback } from '@/interface/interfaces';
 
 class Utils {
+    private static pinHideTimeoutMap = new WeakMap<HTMLInputElement, number>();
+
     static throwError = _errorUtils.throwError;
     static deepMerge = _deepMerge;
     static setStylesheetId = _setStylesheetId;
@@ -37,21 +39,64 @@ class Utils {
         element: HTMLInputElement,
         onInput?: OnChangeCallback,
         onComplete?: OnCompleteCallback,
-        secret?: string
+        secret?: string // placeholder char
     ): void {
         const value = element.value;
-        const grids = Utils.getElem('.pincode-grid span', 'all') as NodeList;
+        const grids = Utils.getElem('.pincode-grid span', 'all') as NodeListOf<HTMLSpanElement>;
 
+        // If not secure, update immediately
+        if (!secret) {
+            grids.forEach((span, index) => {
+                span.textContent = value[index] || '';
+            });
+            onInput?.(value, value.length - 1);
+            if (value.length === element.maxLength) {
+                onComplete?.(value);
+            }
+            // Clear any previous timeout
+            Utils.clearTimeout(element);
+            return;
+        }
+
+        // Clear the previous timeout to prevent multiple executions
+        Utils.clearTimeout(element);
+
+        // Show the last character and hide the others
         grids.forEach((span, index) => {
-            span.textContent = secret && value[index] ? secret : value[index] || '';
+            if (index === value.length - 1) {
+                span.textContent = value[index] || '';
+            } else {
+                span.textContent = value[index] ? secret : '';
+            }
         });
 
-        // Call onchange event if defined
-        onInput?.(element.value, element.value.length - 1);
+        // Call onInput event if defined
+        onInput?.(value, value.length - 1);
+
+        // Set a timeout to hide all characters
+        if (value.length > 0) {
+            const timeout = window.setTimeout(() => {
+                // Check if the value has changed before hiding
+                if (element.value === value) {
+                    grids.forEach((span, idx) => {
+                        span.textContent = value[idx] ? secret : '';
+                    });
+                }
+                Utils.pinHideTimeoutMap.delete(element);
+            }, 500);
+            Utils.pinHideTimeoutMap.set(element, timeout);
+        }
 
         // Call oncomplete event if defined and the pin code is complete
-        if (element.value.length === element.maxLength) {
-            onComplete?.(element.value);
+        if (value.length === element.maxLength) {
+            onComplete?.(value);
+        }
+    }
+
+    static clearTimeout(element: HTMLInputElement): void {
+        if (Utils.pinHideTimeoutMap.has(element)) {
+            clearTimeout(Utils.pinHideTimeoutMap.get(element));
+            Utils.pinHideTimeoutMap.delete(element);
         }
     }
 }
