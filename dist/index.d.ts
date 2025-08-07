@@ -5,6 +5,7 @@ interface PincodeInputOptions {
     secure: boolean;
     placeHolder: string;
     forceDigits: boolean;
+    enableNavigation: boolean;
     length: number;
     styles: Record<string, StylesObject>;
     onLoad: () => void;
@@ -38,6 +39,7 @@ declare class PincodeInput {
     private static version;
     private element;
     private options;
+    private activeGridIndex;
     private onInputCallback;
     private onCompleteCallback;
     constructor(element: string | Element, option?: Partial<PincodeInputOptions>);
@@ -46,6 +48,7 @@ declare class PincodeInput {
      */
     private init;
     private createPincodeGrids;
+    private setActiveGrid;
     private updateFocus;
     private removeFocus;
     private onPinInput;

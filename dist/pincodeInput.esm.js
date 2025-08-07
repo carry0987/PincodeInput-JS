@@ -5,6 +5,7 @@ const defaults = {
     secure: false,
     placeHolder: '•',
     forceDigits: true,
+    enableNavigation: true,
     length: 6,
     styles: {},
     onLoad: () => { },
@@ -80,6 +81,9 @@ const replaceRule = {
 };
 function isObject(item) {
     return typeof item === 'object' && item !== null && !isArray(item);
+}
+function isNumber(item) {
+    return typeof item === 'number';
 }
 function isArray(item) {
     return Array.isArray(item);
@@ -178,6 +182,7 @@ function addEventListener(element, eventName, handler, options) {
 }
 
 class Utils {
+    static pinHideTimeoutMap = new WeakMap();
     static throwError = errorUtils.throwError;
     static deepMerge = deepMerge;
     static setStylesheetId = setStylesheetId;
@@ -193,17 +198,68 @@ class Utils {
     static isDigit(key) {
         return /^\d$/.test(key);
     }
-    static updateVisiblePinCode(element, onInput, onComplete, secret) {
+    static updateVisiblePinCode(element, onInput, onComplete, secret, // placeholder char
+    activeIndex) {
         const value = element.value;
         const grids = Utils.getElem('.pincode-grid span', 'all');
+        // If not secure, update immediately
+        if (!secret) {
+            grids.forEach((span, idx) => {
+                if (isNumber(activeIndex)) {
+                    if (idx === activeIndex && !value[idx]) {
+                        span.textContent = ''; // Forced clear
+                    }
+                    else {
+                        span.textContent = value[idx] || '';
+                    }
+                }
+                else {
+                    span.textContent = value[idx] || '';
+                }
+            });
+            onInput?.(value, activeIndex ?? value.length - 1);
+            if (value.length === element.maxLength) {
+                onComplete?.(value);
+            }
+            // Clear any previous timeout
+            Utils.clearTimeout(element);
+            return;
+        }
+        // Clear the previous timeout to prevent multiple executions
+        Utils.clearTimeout(element);
+        // Show the last character and hide the others
         grids.forEach((span, index) => {
-            span.textContent = secret && value[index] ? secret : value[index] || '';
+            if (index === value.length - 1) {
+                span.textContent = value[index] || '';
+            }
+            else {
+                span.textContent = value[index] ? secret : '';
+            }
         });
-        // Call onchange event if defined
-        onInput?.(element.value, element.value.length - 1);
+        // Call onInput event if defined
+        onInput?.(value, element.selectionStart ?? value.length - 1);
+        // Set a timeout to hide all characters
+        if (value.length > 0) {
+            const timeout = window.setTimeout(() => {
+                // Check if the value has changed before hiding
+                if (element.value === value) {
+                    grids.forEach((span, idx) => {
+                        span.textContent = value[idx] ? secret : '';
+                    });
+                }
+                Utils.pinHideTimeoutMap.delete(element);
+            }, 500);
+            Utils.pinHideTimeoutMap.set(element, timeout);
+        }
         // Call oncomplete event if defined and the pin code is complete
-        if (element.value.length === element.maxLength) {
-            onComplete?.(element.value);
+        if (value.length === element.maxLength) {
+            onComplete?.(value);
+        }
+    }
+    static clearTimeout(element) {
+        if (Utils.pinHideTimeoutMap.has(element)) {
+            clearTimeout(Utils.pinHideTimeoutMap.get(element));
+            Utils.pinHideTimeoutMap.delete(element);
         }
     }
 }
@@ -224,9 +280,10 @@ const reportInfo = (vars, showType = false) => {
 
 class PincodeInput {
     static instances = [];
-    static version = '1.1.1';
+    static version = '1.2.0';
     element;
     options = defaults;
+    activeGridIndex = 0;
     // Methods for external use
     onInputCallback = undefined;
     onCompleteCallback = undefined;
@@ -328,23 +385,35 @@ class PincodeInput {
         Utils.addEventListener(this.element, 'blur', this.removeFocus.bind(this), true);
         // If autofocus is true, focus the hidden input
         if (options.autoFocus) {
-            this.element.focus();
+            this.setActiveGrid(0);
         }
         return this;
+    }
+    // Set the active grid index and focus the input
+    setActiveGrid(index) {
+        this.activeGridIndex = index;
+        this.element.focus();
+        // Move the cursor to the specified index
+        this.element.setSelectionRange(index, index);
+        this.updateFocus();
     }
     // Update the current focus grid based on the length of the input value
     updateFocus() {
         const grids = Array.from(Utils.getElem('.pincode-grid', 'all'));
         const valueLength = this.element.value.length;
-        grids.forEach((grid, index) => {
-            this.element.focus();
-            if (index === valueLength) {
+        // If enableNavigation is false, set activeGridIndex to valueLength
+        if (!this.options.enableNavigation || this.options.secure) {
+            this.activeGridIndex = valueLength;
+        }
+        grids.forEach((grid, idx) => {
+            if (idx === this.activeGridIndex) {
                 Utils.addClass(grid, 'pincode-focus');
             }
             else {
                 Utils.removeClass(grid, 'pincode-focus');
             }
         });
+        this.element.focus();
     }
     // Remove focus from all grids
     removeFocus() {
@@ -360,9 +429,18 @@ class PincodeInput {
             // Remove any non-digit characters from the value
             input.value = input.value.replace(/\D/g, '');
         }
+        // If navigation is enabled, update activeGridIndex to current caret position
+        if (this.options.enableNavigation && !this.options.secure) {
+            // If selectionStart has a value, synchronize activeGridIndex
+            this.activeGridIndex = input.selectionStart ?? input.value.length;
+        }
+        else {
+            // Default behavior: put focus on last character
+            this.activeGridIndex = input.value.length;
+        }
         const placeHolder = this.options.secure ? this.options.placeHolder : undefined;
         if (input.value.length <= input.maxLength) {
-            Utils.updateVisiblePinCode(input, this.onInputCallback, this.onCompleteCallback, placeHolder);
+            Utils.updateVisiblePinCode(input, this.onInputCallback, this.onCompleteCallback, placeHolder, this.activeGridIndex);
             this.updateFocus();
         }
         else {
@@ -376,6 +454,52 @@ class PincodeInput {
         const isPasteShortcut = (event.ctrlKey || event.metaKey) && event.key === 'v';
         if (isPasteShortcut)
             return; // Do not prevent the default paste action
+        if (this.options.enableNavigation && !this.options.secure) {
+            const { maxLength } = this.element;
+            switch (event.key) {
+                case 'ArrowLeft':
+                    if (this.activeGridIndex > 0) {
+                        this.setActiveGrid(this.activeGridIndex - 1);
+                    }
+                    event.preventDefault();
+                    return;
+                case 'ArrowRight':
+                    if (this.activeGridIndex < maxLength - 1) {
+                        this.setActiveGrid(this.activeGridIndex + 1);
+                    }
+                    event.preventDefault();
+                    return;
+                case 'ArrowUp':
+                    this.setActiveGrid(0);
+                    event.preventDefault();
+                    return;
+                case 'ArrowDown':
+                    this.setActiveGrid(maxLength - 1);
+                    event.preventDefault();
+                    return;
+                case 'Backspace':
+                    // If the cursor is not in the first grid, move to the previous grid and delete that position, otherwise follow the original behavior
+                    if (this.activeGridIndex > 0) {
+                        const valueArr = this.element.value.split('');
+                        valueArr.splice(this.activeGridIndex, 1);
+                        this.element.value = valueArr.join('');
+                        this.setActiveGrid(this.activeGridIndex - 1);
+                        Utils.updateVisiblePinCode(this.element, this.onInputCallback, this.onCompleteCallback, undefined, this.activeGridIndex + 1);
+                        this.updateFocus();
+                    }
+                    else {
+                        this.handleBackspace();
+                    }
+                    event.preventDefault();
+                    return;
+                case 'Escape':
+                    if (this.options.allowEscape) {
+                        this.handleEscape();
+                    }
+                    return;
+            }
+            return;
+        }
         if (event.key === 'Backspace') {
             this.handleBackspace();
             event.preventDefault();
@@ -397,11 +521,11 @@ class PincodeInput {
     handleBackspace() {
         const value = this.element.value;
         const placeHolder = this.options.secure ? this.options.placeHolder : undefined;
-        if (value.length > 0) {
-            this.element.value = value.slice(0, value.length - 1);
-            Utils.updateVisiblePinCode(this.element, this.onInputCallback, this.onCompleteCallback, placeHolder);
-            this.updateFocus();
-        }
+        if (value.length === 0)
+            return;
+        this.element.value = value.slice(0, value.length - 1);
+        Utils.updateVisiblePinCode(this.element, this.onInputCallback, this.onCompleteCallback, placeHolder);
+        this.updateFocus();
     }
     // Handle Escape key
     handleEscape() {
@@ -426,13 +550,18 @@ class PincodeInput {
             this.element.value = pastedData;
         }
         Utils.updateVisiblePinCode(this.element, this.onInputCallback, this.onCompleteCallback, this.options.secure ? this.options.placeHolder : undefined);
+        // Update the active grid index based on the pasted value
+        this.activeGridIndex = this.element.value.length;
+        // Update the focus on the grids
         this.updateFocus();
         event.preventDefault(); // Prevent the default paste action
     }
     // Clear the input value
     clear() {
         this.element.value = '';
+        this.activeGridIndex = 0;
         this.element.dispatchEvent(new Event('input'));
+        Utils.clearTimeout(this.element);
     }
     // Destroy the instance
     destroy() {
