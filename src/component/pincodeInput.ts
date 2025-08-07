@@ -223,6 +223,12 @@ class PincodeInput {
                     this.setActiveGrid(maxLength - 1);
                     event.preventDefault();
                     return;
+                case 'Escape':
+                    if (this.options.allowEscape) {
+                        this.handleEscape();
+                    }
+                    event.preventDefault();
+                    return;
             }
 
             return;
