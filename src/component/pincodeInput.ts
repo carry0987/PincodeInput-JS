@@ -227,7 +227,6 @@ class PincodeInput {
                     if (this.options.allowEscape) {
                         this.handleEscape();
                     }
-                    event.preventDefault();
                     return;
             }
 
