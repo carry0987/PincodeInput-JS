@@ -144,14 +144,19 @@ class PincodeInput {
         const grids = Array.from(Utils.getElem('.pincode-grid', 'all')) as HTMLDivElement[];
         const valueLength = this.element.value.length;
 
-        grids.forEach((grid, index) => {
-            this.element.focus();
-            if (index === valueLength) {
+        if (!this.options.enableNavigation) {
+            this.activeGridIndex = valueLength;
+        }
+
+        grids.forEach((grid, idx) => {
+            if (idx === this.activeGridIndex) {
                 Utils.addClass(grid, 'pincode-focus');
             } else {
                 Utils.removeClass(grid, 'pincode-focus');
             }
         });
+        this.element.focus();
+        this.element.setSelectionRange(this.activeGridIndex, this.activeGridIndex);
     }
 
     // Remove focus from all grids
@@ -169,6 +174,7 @@ class PincodeInput {
             // Remove any non-digit characters from the value
             input.value = input.value.replace(/\D/g, '');
         }
+
         const placeHolder = this.options.secure ? this.options.placeHolder : undefined;
         if (input.value.length <= input.maxLength) {
             Utils.updateVisiblePinCode(input, this.onInputCallback, this.onCompleteCallback, placeHolder);
