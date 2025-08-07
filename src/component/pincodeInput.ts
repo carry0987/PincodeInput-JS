@@ -9,6 +9,7 @@ class PincodeInput {
     private static version: string = '__version__';
     private element!: HTMLInputElement;
     private options: PincodeInputOptions = defaults;
+    private activeGridIndex: number = 0;
 
     // Methods for external use
     private onInputCallback: OnChangeCallback | undefined = undefined;
@@ -123,10 +124,19 @@ class PincodeInput {
 
         // If autofocus is true, focus the hidden input
         if (options.autoFocus) {
-            this.element.focus();
+            this.setActiveGrid(0);
         }
 
         return this;
+    }
+
+    // Set the active grid index and focus the input
+    private setActiveGrid(index: number): void {
+        this.activeGridIndex = index;
+        this.element.focus();
+        // Move the cursor to the specified index
+        this.element.setSelectionRange(index, index);
+        this.updateFocus();
     }
 
     // Update the current focus grid based on the length of the input value
