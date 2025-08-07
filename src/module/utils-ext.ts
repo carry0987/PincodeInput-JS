@@ -1,4 +1,5 @@
 import {
+    isNumber as _isNumber,
     deepMerge as _deepMerge,
     setStylesheetId as _setStylesheetId,
     setReplaceRule as _setReplaceRule,
@@ -39,17 +40,26 @@ class Utils {
         element: HTMLInputElement,
         onInput?: OnChangeCallback,
         onComplete?: OnCompleteCallback,
-        secret?: string // placeholder char
+        secret?: string, // placeholder char
+        activeIndex?: number
     ): void {
         const value = element.value;
         const grids = Utils.getElem('.pincode-grid span', 'all') as NodeListOf<HTMLSpanElement>;
 
         // If not secure, update immediately
         if (!secret) {
-            grids.forEach((span, index) => {
-                span.textContent = value[index] || '';
+            grids.forEach((span, idx) => {
+                if (_isNumber(activeIndex)) {
+                    if (idx === activeIndex && !value[idx]) {
+                        span.textContent = ''; // Forced clear
+                    } else {
+                        span.textContent = value[idx] || '';
+                    }
+                } else {
+                    span.textContent = value[idx] || '';
+                }
             });
-            onInput?.(value, element.selectionStart ?? value.length - 1);
+            onInput?.(value, activeIndex ?? value.length - 1);
             if (value.length === element.maxLength) {
                 onComplete?.(value);
             }
