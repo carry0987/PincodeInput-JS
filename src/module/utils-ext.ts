@@ -49,7 +49,7 @@ class Utils {
             grids.forEach((span, index) => {
                 span.textContent = value[index] || '';
             });
-            onInput?.(value, value.length - 1);
+            onInput?.(value, element.selectionStart ?? value.length - 1);
             if (value.length === element.maxLength) {
                 onComplete?.(value);
             }
@@ -71,7 +71,7 @@ class Utils {
         });
 
         // Call onInput event if defined
-        onInput?.(value, value.length - 1);
+        onInput?.(value, element.selectionStart ?? value.length - 1);
 
         // Set a timeout to hide all characters
         if (value.length > 0) {
