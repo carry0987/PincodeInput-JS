@@ -248,6 +248,7 @@ class PincodeInput {
     // Clear the input value
     public clear(): void {
         this.element.value = '';
+        this.activeGridIndex = 0;
         this.element.dispatchEvent(new Event('input'));
     }
 
