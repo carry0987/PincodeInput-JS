@@ -144,7 +144,8 @@ class PincodeInput {
         const grids = Array.from(Utils.getElem('.pincode-grid', 'all')) as HTMLDivElement[];
         const valueLength = this.element.value.length;
 
-        if (!this.options.enableNavigation) {
+        // If enableNavigation is false, set activeGridIndex to valueLength
+        if (!this.options.enableNavigation || this.options.secure) {
             this.activeGridIndex = valueLength;
         }
 
@@ -156,7 +157,6 @@ class PincodeInput {
             }
         });
         this.element.focus();
-        this.element.setSelectionRange(this.activeGridIndex, this.activeGridIndex);
     }
 
     // Remove focus from all grids
@@ -175,9 +175,18 @@ class PincodeInput {
             input.value = input.value.replace(/\D/g, '');
         }
 
+        // If navigation is enabled, update activeGridIndex to current caret position
+        if (this.options.enableNavigation && !this.options.secure) {
+            // If selectionStart has a value, synchronize activeGridIndex
+            this.activeGridIndex = input.selectionStart ?? input.value.length;
+        } else {
+            // Default behavior: put focus on last character
+            this.activeGridIndex = input.value.length;
+        }
+
         const placeHolder = this.options.secure ? this.options.placeHolder : undefined;
         if (input.value.length <= input.maxLength) {
-            Utils.updateVisiblePinCode(input, this.onInputCallback, this.onCompleteCallback, placeHolder);
+            Utils.updateVisiblePinCode(input, this.onInputCallback, this.onCompleteCallback, placeHolder, this.activeGridIndex);
             this.updateFocus();
         } else {
             // Prevent the value from exceeding maxLength
@@ -190,6 +199,34 @@ class PincodeInput {
         // Allow paste shortcut (Ctrl+V or Cmd+V) regardless of forceDigits
         const isPasteShortcut = (event.ctrlKey || event.metaKey) && event.key === 'v';
         if (isPasteShortcut) return; // Do not prevent the default paste action
+
+        if (this.options.enableNavigation && !this.options.secure) {
+            const { maxLength } = this.element;
+            switch (event.key) {
+                case 'ArrowLeft':
+                    if (this.activeGridIndex > 0) {
+                        this.setActiveGrid(this.activeGridIndex - 1);
+                    }
+                    event.preventDefault();
+                    return;
+                case 'ArrowRight':
+                    if (this.activeGridIndex < maxLength - 1) {
+                        this.setActiveGrid(this.activeGridIndex + 1);
+                    }
+                    event.preventDefault();
+                    return;
+                case 'ArrowUp':
+                    this.setActiveGrid(0);
+                    event.preventDefault();
+                    return;
+                case 'ArrowDown':
+                    this.setActiveGrid(maxLength - 1);
+                    event.preventDefault();
+                    return;
+            }
+
+            return;
+        }
 
         if (event.key === 'Backspace') {
             this.handleBackspace();
@@ -213,11 +250,11 @@ class PincodeInput {
     private handleBackspace(): void {
         const value = this.element.value;
         const placeHolder = this.options.secure ? this.options.placeHolder : undefined;
-        if (value.length > 0) {
-            this.element.value = value.slice(0, value.length - 1);
-            Utils.updateVisiblePinCode(this.element, this.onInputCallback, this.onCompleteCallback, placeHolder);
-            this.updateFocus();
-        }
+        if (value.length === 0) return;
+
+        this.element.value = value.slice(0, value.length - 1);
+        Utils.updateVisiblePinCode(this.element, this.onInputCallback, this.onCompleteCallback, placeHolder);
+        this.updateFocus();
     }
 
     // Handle Escape key
@@ -247,6 +284,9 @@ class PincodeInput {
             this.onCompleteCallback,
             this.options.secure ? this.options.placeHolder : undefined
         );
+        // Update the active grid index based on the pasted value
+        this.activeGridIndex = this.element.value.length;
+        // Update the focus on the grids
         this.updateFocus();
         event.preventDefault(); // Prevent the default paste action
     }
@@ -256,6 +296,7 @@ class PincodeInput {
         this.element.value = '';
         this.activeGridIndex = 0;
         this.element.dispatchEvent(new Event('input'));
+        Utils.clearTimeout(this.element);
     }
 
     // Destroy the instance
