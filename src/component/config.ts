@@ -7,6 +7,7 @@ export const defaults: PincodeInputOptions = {
     secure: false,
     placeHolder: '•',
     forceDigits: true,
+    enableNavigation: true,
     length: 6,
     styles: {},
     onLoad: () => {},

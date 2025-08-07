@@ -223,6 +223,20 @@ class PincodeInput {
                     this.setActiveGrid(maxLength - 1);
                     event.preventDefault();
                     return;
+                case 'Backspace':
+                    // If the cursor is not in the first grid, move to the previous grid and delete that position, otherwise follow the original behavior
+                    if (this.activeGridIndex > 0) {
+                        const valueArr = this.element.value.split('');
+                        valueArr.splice(this.activeGridIndex, 1);
+                        this.element.value = valueArr.join('');
+                        this.setActiveGrid(this.activeGridIndex - 1);
+                        Utils.updateVisiblePinCode(this.element, this.onInputCallback, this.onCompleteCallback, undefined, this.activeGridIndex + 1);
+                        this.updateFocus();
+                    } else {
+                        this.handleBackspace();
+                    }
+                    event.preventDefault();
+                    return;
                 case 'Escape':
                     if (this.options.allowEscape) {
                         this.handleEscape();
